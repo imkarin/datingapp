@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse trail</title>
+
+    <style>
+        body {
+          background: #786bbd;
+        }
+        .dot {
+          top: 10px; left: 10px;
+          height: 20px; width: 20px;
+          border-radius: 100%;
+          background: #000000;
+          position: absolute;
+        }
+      </style>
+      
+</head>
+    
+<body>    
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+
+    <script>
+        let dots = document.getElementsByClassName("dot");
+
+        window.addEventListener("mousemove", event => {      
+            let mouseX = event.clientX;
+            let mouseY = event.clientY;
+        
+            setTimeout(function() {
+                for (i = 0; i < dots.length; i++) {
+                    dots[i].style.left = mouseX - 10 + "px";
+                    dots[i].style.top = mouseY - 10 + "px";
+                }
+            }, 50); 
+        });
+      </script>
+</body>
+</html>

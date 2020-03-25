@@ -1,0 +1,32 @@
+* {}
+
+body {}
+
+a, a:active, a:visited {}
+
+a:hover {}
+
+h1 {}
+
+h2 {}
+
+h3 {}
+
+header {}
+
+main {}
+
+main > ul {}
+
+main > ul > li {}
+
+main figure {}
+
+main figure > image {}
+
+main figure > figcaption {}
+
+main > ul > li > button {}
+
+footer {}
+

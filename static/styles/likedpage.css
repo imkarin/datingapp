@@ -1,0 +1,155 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 1em;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 3em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* header with page title */
+header {
+    padding: 0 20px;
+    padding-top: 10px;
+}
+
+
+/* main: list with chats (liked people) */
+main section:nth-of-type(2) ul {
+    opacity: .5;
+}
+
+main section:nth-of-type(2) figure > img {
+    width: 35px;
+    height: 35px;
+}
+
+main ul {
+    list-style: none;
+    padding-bottom: 25px;
+}
+
+main h2 {
+    padding: 0 20px 10px 20px;
+    font-size: 1.1em;
+}
+
+main ul > li {
+    padding: 20px;
+    background: #fff;
+    border-bottom: .5px solid rgba(0, 0, 0, .2)
+}
+
+main figure {
+    display: flex;
+    align-items: center;
+}
+
+main figure > img {
+    border-radius: 100%;
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+}
+
+main figure > figcaption {
+    margin-left: 15px;
+}
+
+main figure > button {
+    position: absolute;
+    right: 25px;
+    color: #c1c1c1;
+    font-size: .8em;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.invisible {
+    display: none;
+}
+
+/* footer at the end of the liked list, when there are no more people to display */
+footer {
+    padding: 5px 20px;
+    color: rgba(0, 0, 0, .7);
+    margin-top: 20px;
+}
+
+
+/* bottom nav */
+nav {
+    width: 100%;
+    height: 60px;
+    display: block;
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.0);
+}
+
+nav ul {
+    margin: 0 auto;
+    width: 95vw;
+    height: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    font-size: .7em;
+    line-height: 2.2em;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+nav img {
+    margin: 7px auto 0 auto;
+    width: 20px;
+    opacity: .33;
+    display: block;
+}
+
+nav ul > li:last-of-type > a {
+    color: rgb(0, 0, 0, .9);
+    font-family: 'Roboto Bold', sans-serif;
+}
+
+nav ul > li:last-of-type > a > img {
+    opacity: 1;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/profile.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Sansita:400,400i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
+    <title><%= data.firstName %>'s profile</title>
+</head>
+<body>
+    <header>
+        <a href="/">X</a>
+        <img src="../static/images/<%= data.photo %>" alt="Profilepicture">
+            <form action="/<%= data.id %>" method="post">
+                <button class="likebutton" name="likebutton">❤</button>
+            </form>
+            <button data-id="<%= data.id %>" class="dislikebutton" name="dislikebutton">x</button>
+        </form>
+    </header>
+    
+    <main>
+        <section>
+            <h1><%= data.firstName + ' ' + data.lastName %></h1>
+            <p><%= data.age %></p>
+        </section>
+
+        <section>
+            <h4>Description</h4>
+            <p><%= data.desc %></p>
+        </section>
+
+        <section>
+            <h4>Favourite artists</h4>
+            <ul>
+                <li>
+                    <figure>
+                        <img src="../static/images/omam.png" alt="">
+                        <figcaption>Of Mice &amp; Men</figcaption>
+                    </figure>
+                </li>
+
+                <li>
+                    <figure>
+                        <img src="../static/images/atl.jpg" alt="">
+                        <figcaption>All Time Low</figcaption>
+                    </figure>
+                </li>
+
+                <li>
+                    <figure>
+                        <img src="../static/images/wagewar.png" alt="">
+                        <figcaption>Wage War</figcaption>
+                    </figure>
+                </li>
+            </ul>
+        </section>    
+    </main>
+    <script src="../static/scripts/profile.js"></script>
+</body>
+</html>
