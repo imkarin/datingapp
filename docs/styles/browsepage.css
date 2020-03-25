@@ -1,0 +1,206 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 1em;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 3em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* browse page header */
+/* header {
+    width: 100%;
+    max-width: 850px;
+    padding: 30px 25px;
+    margin-left: auto;
+    margin-right: auto; 
+    overflow: hidden;
+} */
+
+header {
+    display: none;
+}
+
+main {
+    padding: 25px;
+    border-radius: 15px;
+
+    width:100%;
+    height: calc(100vh - 60px); /* viewport height - nav height */
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* browse page, people cards (click for detail, like or dislike */
+main > ul {
+    height: 100%;
+    position: relative;
+    list-style: none;
+}
+
+main > ul > li {
+    margin-bottom: 10px;
+    border-radius: 9px;
+    padding: 25px;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);;
+}
+
+main > ul figure {
+    height: 100%;
+    color: #000;
+}
+
+main > ul figure img {
+    margin-top: -25px;
+    margin-left: -25px;
+    position: relative;
+    height: 76%;
+    width: calc(100% + 50px);
+    display:block;
+    background: #fffaaa;
+    border-top-left-radius: 9px;
+    border-top-right-radius: 9px;
+    object-fit: cover;
+    object-position: center;
+}
+
+main > ul figure > figcaption {
+    margin-top: 25px;
+}
+
+main > ul figure > figcaption > h2 {
+    margin-bottom: 5px;
+}
+
+main > ul figure > figcaption > button {
+    padding: 5px 10px;
+    top: calc(76% - 70px);
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    background: #ffb4b7;
+    border: none;
+    outline: none;
+    border-radius: 100%;
+    position: absolute;
+    font-size: 1.4em;
+    color: #fff;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .1);
+    transition-delay: .2s;
+    transition-duration: .4s;
+}
+
+main > ul figure > figcaption > button:active {
+    background: #ff6c71;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+main > ul figure > figcaption > button:nth-of-type(2) {
+    background: #cacaca;
+    right: 80px;
+}
+
+
+main > ul figure > figcaption > button:nth-of-type(2):active {
+    background: #bb2222;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+
+main > ul figure > figcaption > section {
+    position: absolute;
+    bottom: 25px;
+    display: flex;
+    justify-content: start;
+}
+
+main > ul figure > figcaption > section > p {
+    margin-right: 8px;
+    padding: 6px 15px;
+    border-radius: 4px;
+    background: #ffb4b7;
+    color: white;
+}
+
+/* when there are no more people to display, screen becomes empty */
+main > ul.invisible {
+    display: none;
+}
+
+main > p:first-of-type {
+    margin-top: 40vh;
+    text-align: center;
+}
+
+/* bottom nav */
+nav {
+    width: 100%;
+    height: 60px;
+    display: block;
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.0);
+}
+
+nav ul {
+    margin: 0 auto;
+    width: 95vw;
+    height: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    font-size: .7em;
+    line-height: 2.2em;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+nav img {
+    margin: 7px auto 0 auto;
+    width: 20px;
+    opacity: .33;
+    display: block;
+}

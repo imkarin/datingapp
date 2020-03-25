@@ -1,0 +1,63 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../static/styles/likedpage.css">
+        <title>Liked people</title>
+    </head>
+    <body>
+        <header>
+            <h1>My liked people</h1>
+        </header>
+        
+        <main>
+            <section>
+                <% if (data.matches.length > 0) { %>
+                    <h2>Matches</h2>
+                <% } %>
+                <ul>
+                    <% for (let i = 0; i < data.matches.length; i++) { %>
+                        <li>
+                            <figure>
+                                <img data-id="<%= data.matches[i].id %>" src="../static/images/<%= data.matches[i].photo %>" alt="Profilepicture">
+                                <figcaption>
+                                    <h4><%= data.matches[i].name %></h4>
+                                    <p><%= data.matches[i].msg %> Last sent message here.</p>
+                                </figcaption>
+                                <button>X</button>
+                            </figure>
+                        </li>
+                        <% } %>
+                    </ul>
+                </section>
+                
+                <section>
+                    <% if (data.pending.length > 0) { %>
+                        <h2>Pending</h2>
+                    <% } %>
+                    <ul>
+                        <% for (let i = 0; i < data.pending.length; i++) { %>
+                            <li>
+                                <figure>
+                                    <img data-id="<%= data.pending[i].id %>" src="../static/images/<%= data.pending[i].photo %>" alt="Profilepicture">
+                                    <figcaption>
+                                        <h4><%= data.pending[i].name %></h4>
+                                    </figcaption>
+                                    <button>X</button>
+                                </figure>
+                            </li>
+                        <% } %>
+                    </ul>
+                </section>
+        </main>
+
+        <footer>
+            <p>No more people in your liked list.</p>
+        </footer>
+                    
+        <%- include ('nav') -%>
+
+        <script src="../static/scripts/likedpage.js"></script>
+    </body>
+    </html>

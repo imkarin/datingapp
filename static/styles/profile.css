@@ -1,0 +1,171 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 1em;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 1.7em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* profile header */
+header {
+    width: 100%;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 450px;  
+    position: relative;
+}
+
+@media only screen and (min-width: 900px) {
+    body {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    header {
+        margin-top: -150px;
+        min-height: 800px;
+    }
+}
+
+header a, header a:active, header a:visited, header a:hover {
+    z-index: 3000;
+    top: 6px;
+    right: 15px;
+    position: absolute;
+    color: #fff;
+    font-family: 'Montserrat Light', sans-serif;
+    font-size: 2em;
+    text-transform: lowercase;
+}
+
+header img:first-of-type { 
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: top
+}
+
+/* like button */
+header button {
+    padding: 5px 10px;
+    bottom: 0;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    background: #ffb4b7;
+    border: none;
+    outline: none;
+    border-radius: 100%;
+    position: absolute;
+    font-size: 1.4em;
+    color: #fff;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .1);
+    z-index: 9999;
+}
+
+header button:active {
+    background: #ff6c71;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+header > button:nth-of-type(1) {
+    background: #cacaca;
+    right: 80px;
+}
+
+
+header > button:nth-of-type(1):active {
+    background: #bb2222;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+/* profile main */
+main {
+    padding: 0 25px;
+    background-color:#fff;
+    border-radius: 15px;
+    position: absolute;
+    margin-top: -25px;
+
+    width:100%;
+    max-width: 850px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+main > section {
+    padding: 15px 0 5px 0;
+}
+
+/* name, age, city */
+main > section:first-of-type {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+/* favourite artists */
+main > section > ul {
+   padding: 20px 0;
+    list-style: none;
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+main > section > ul > li {
+    display: inline-block;
+    width: 48%;
+    margin-right: 10px;
+    max-width: 200px;
+    text-align: center;
+    font-size: 1em;
+
+}
+
+main figure > img {
+    width: 90%;
+    border-radius: 100%;
+}
+
+main figure > figcaption {
+    margin-top: 10px;
+}
