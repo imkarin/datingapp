@@ -5,6 +5,17 @@ console.log("Server started, wait for database to connect...");
 const express = require("express");
 const app = express();
 
+// Movie database API ----------------------------------------------------------------------------
+const request = require('request');
+  // This is the baseURl for accessing the API database
+let baseURL = 'https://api.themoviedb.org/3/';
+  // This is the baseURl for the images for accessing the images in the API database
+let baseImgURL = 'https://image.tmdb.org/t/p/w500';
+  // The id of a movie in the API database
+let movieIdApi = 'null';
+  // The APIKEY
+let APIKEY = process.env.APIKEY;
+
 // Define static files folder -------------------------------------------------------------------
 app.use("/static", express.static("static"));
 
