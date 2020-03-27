@@ -3,11 +3,35 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../static/styles/profile.css">
+	<link rel="stylesheet" href="../static/styles/browsepage.css">
 	<title>Your profilepage</title>
 </head>
 <body>
-	<h1>Your profile</h1>
-	<p><%= data.age %></p>
+	<main>
+		<h1>Your profile</h1>
+		<p>Naam: <%= data.name %></p>
+		<p>Leeftijd: <%= data.age %></p>
+		<p>Description: <% data.desc %></p>
+		<br>
+		<br>
+		<form action="/succes.ejs" method="POST">
+			<label for="movieTitle">Naam film:</label>
+			<input name="movieTitle" type="text">
+			<button type="submit">Voeg film toe</button>
+		</form>
+		<br>
+		<br>
+		<h2>Mijn films:</h2>
+		<% data.movies.forEach(function(data) {
+			%>
+			<div>
+				<img src="<%= data[1] %>" alt="">
+				<p>Title: <%= data[0] %></p>
+			</div>
+			<% }); %>
+	</main>
+
+	<%- include ('nav') -%>
+	
 </body>
 </html>
