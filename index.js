@@ -1,5 +1,8 @@
-// "Server started" message --------------------------------------------------------------------
+// "Server started" message ---------------------------------------------------------------------
 console.log("Server started, wait for database to connect...");
+
+// Require .env ---------------------------------------------------------------------------------
+require("dotenv").config();
 
 // Express --------------------------------------------------------------------------------------
 const express = require("express");
@@ -27,7 +30,6 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 // MongoDB ---------------------------------------------------------------------------------------
-require("dotenv").config();
 const mongo = require("mongodb");
 
 let db = null;
@@ -42,7 +44,7 @@ mongo.MongoClient.connect(url, function (err, client) {
   console.log("Connected to database.");
   
   // the allUsersCollection contains general data about all user accounts
-  allUsersCollection = db.collection("users");
+  allUsersCollection = db.collection("users_profile");
 })
 
 // Session --------------------------------------------------------------------------------------
@@ -62,8 +64,10 @@ app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
 app.get("/profilepage/:id", profilepage);
+//app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
-app.post("/:id", like);
+//app.post("/:id", like);
+app.post("/succes.ejs", addMovie);
 app.delete("/:id", remove);
 app.use(onNotFound);
 
@@ -111,6 +115,7 @@ function allUsers(req, res, next) {
 function profile(req, res, next) {
   // load profile data
   let id = req.params.id;
+  console.log("id= " + id + " userid= " + userid);
   allUsersCollection.findOne({
     id: id
   }, done)
@@ -127,22 +132,61 @@ function profile(req, res, next) {
 function profilepage(req, res) {
   // load profile data
   let id = req.params.id;
-  console.log("(user)id=" + userid + " id=" + id);
+  console.log("userid= " + userid + " id= " + id);
   allUsersCollection.findOne({
-    _id: mongo.ObjectID("5e7b8952e60139474cf97dc3")
+    id: id
   }, done);
 
   function done(err, data) {
     if (err) {
       console.log("Couldn't find user");
     } else {
-      console.log("Found user, user=" + data);
+      console.log("Found user");
       res.render("profilepage.ejs", {
         data: data
       });
-    }
-  }
-}
+    };
+  };
+};
+
+function addMovie(req, res) {
+  // load user id
+  let id = req.params.id;
+  console.log("id= ", userid)
+  //the movie the user adds to his/her profile
+  let insertedMovie = req.body.movieTitle
+
+  //log this movie for confirmation
+  console.log("Movie title input: ", insertedMovie);
+
+  //search in api for the inserted movie
+  request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
+    body = JSON.parse(body); //parse the outcome to object, so requesting data is possible
+    console.log("Movie title from api: ", body.results[0].original_title); //confirming the title
+    let posterLink = baseImgURL + body.results[0].poster_path; //the path to the movie poster image
+    console.log("imagepath: ", posterLink);
+
+  //Add the title of the movie into the 'movies' array in the database
+  allUsersCollection.updateOne({id: "'" + id + "'"}, { $addToSet: {movies: [body.results[0].original_title, posterLink] }}, function(err, req, res) {
+    if (err) {
+      console.log("Error, could not update database");
+    } else {
+      console.log("Update confirmed, added/updated " + body.results[0].original_title + ' and ' + baseImgURL + body.results[0].poster_path + ' to database');
+    };
+    // closes the function that is in updateOne()
+  });
+  //closes the function that is in request()    
+  });
+
+  //render the inserted data to the succes.ejs page
+  res.render("succes.ejs",{
+    data: req.body
+  });
+
+  //Confirmation for the data that is added to the database
+    console.log('This data is added to the database:', data);
+    console.log('title: ', req.body.movieTitle);
+};
 
 function likedUsers(req, res, next) {
   if (userid !== null) {
