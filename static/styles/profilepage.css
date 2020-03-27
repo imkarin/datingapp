@@ -1,0 +1,58 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 1em;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 3em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* browse page header */
+header {
+    display: none;
+}
+
+main {
+    padding: 25px;
+    border-radius: 15px;
+
+    width:100%;
+    height: calc(100vh - 60px); /* viewport height - nav height */
+    max-width: 1150px;
+    margin-left: auto;
+    margin-right: auto;
+}
