@@ -60,6 +60,8 @@ app.get("/login", loginPage);
 app.get("/browsepage", allUsers);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
+app.get("/profilepage", profilepage);
+app.get("/profilepage/:id", profilepage);
 app.post("/login", login);
 app.post("/:id", like);
 app.delete("/:id", remove);
@@ -118,6 +120,26 @@ function profile(req, res, next) {
       next(err);
     } else {
       res.render("profile.ejs", {data: data});
+    }
+  }
+}
+
+function profilepage(req, res) {
+  // load profile data
+  let id = req.params.id;
+  console.log("(user)id=" + userid + " id=" + id);
+  allUsersCollection.findOne({
+    _id: mongo.ObjectID("5e7b8952e60139474cf97dc3")
+  }, done);
+
+  function done(err, data) {
+    if (err) {
+      console.log("Couldn't find user");
+    } else {
+      console.log("Found user, user=" + data);
+      res.render("profilepage.ejs", {
+        data: data
+      });
     }
   }
 }
@@ -187,5 +209,4 @@ function onNotFound(req, res, next) {
 }
 
 // Listen on a port
-app.listen(3000);
-
+app.listen(3000, () => console.log("Server is running..."));
