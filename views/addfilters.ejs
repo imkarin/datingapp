@@ -23,9 +23,9 @@
                 
             <label>
                 Who are at least
-                <output name="output" for="years">18</output>
+                <output name="output" for="years" type="number">18</output>
                 years old
-                <input type="range" name="years" value="18" min="18" max="40" oninput="output.value = parseInt(years.value)">
+                <input type="range" name="years" value="18" min="18" max="40" oninput="output.value = years.value">
             </label>
             <input type="submit" value="Save">
         </form>

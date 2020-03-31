@@ -102,7 +102,12 @@ function filterPage(req, res, next) {
 }
 
 function addFilters(req, res, next) {
-  console.log(req.body);
+  // put filter-formdata in the user's preferences-object in the db
+  const userPrefs = {};
+  userPrefs["gender"] = req.body.gender;
+  userPrefs.minAge = parseInt(req.body.years);
+
+  allUsersCollection.updateOne({id: userid}, { $set: {preference: userPrefs}});
   res.redirect("/browsepage")
 }
   
