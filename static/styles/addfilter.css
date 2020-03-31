@@ -1,0 +1,202 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 16px;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 3em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* main */
+main {
+    background-image: linear-gradient(to bottom right, rgb(246, 146, 121), rgb(214, 128, 240), rgb(94, 99, 233));
+    padding: 25px;
+    margin: -150px;
+    border-radius: 0 0 100% 0;
+    color: #FFFFFF;
+    animation: showmain .7s forwards;
+}
+
+@keyframes showmain {
+    0% {
+        margin: -150px;
+        width: 0px;
+        height: 0px;
+        border-radius: 0 0 100% 0;
+    } 50% {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0 0 100% 0;
+    } 100% {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+}
+
+/* addfilter page, X button */
+main > form input[type=submit] {
+    font-family: 'Roboto Light', sans-serif;
+    font-size: .9em;
+    color: #FFFFFF;
+    padding: 10px 25px;
+    border-radius: 25px;
+    background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
+    border: none;
+    outline: none;
+}
+
+main > form {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-52%);
+    opacity: 0;
+    width: calc(100% - 50px);
+    animation: formappear .7s .5s forwards;
+}
+
+@keyframes formappear {
+    0% {
+        opacity: 0;
+    } 100% {
+        opacity: 1;
+    }
+}
+
+main > form label {
+    display: block;
+    margin: 10px 0;
+}
+
+main > form label:last-of-type {
+    margin-top: 30px;
+}
+
+main > form input[type=range] {
+    margin: 15px 0;
+    width: 100%;
+}
+
+main > form output {
+    font-weight: 800;
+}
+
+/* main on desktop */
+@media only screen and (min-width: 800px) {
+    
+}
+
+/* bottom nav */
+nav > img {
+    display: none;
+}
+
+nav {
+    width: 100%;
+    height: 60px;
+    display: block;
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.0);
+}
+
+nav ul {
+    margin: 0 auto;
+    width: 95vw;
+    height: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    font-size: .7em;
+    line-height: 2.2em;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+nav ul img {
+    margin: 7px auto 0 auto;
+    width: 20px;
+    opacity: .33;
+    display: block;
+}
+
+nav ul > li:nth-of-type(2) > a {
+    color: rgb(0, 0, 0, .9);
+    font-family: 'Roboto Bold', sans-serif;
+}
+
+nav ul > li:nth-of-type(2) > a > img {
+    opacity: .9;
+}
+
+@media only screen and (min-width: 800px) {
+    /* bottom nav */
+    nav > img {
+        width: 150px;
+        align-self: center;
+        display: block;
+        margin: 0;
+        opacity: 1;
+    }
+
+    nav {
+        position: absolute;
+        top: 0;
+        padding: 25px 25px 0 25px;
+        width: 100vw;
+        background-color: transparent;
+        box-shadow: none;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    nav ul {
+        margin: 0;
+        width: 300px;
+        font-size: .85em;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    nav ul img {
+        display: none;
+    }
+}

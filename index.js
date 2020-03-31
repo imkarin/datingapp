@@ -47,9 +47,11 @@ app.use(session({
 app.get("/", allUsers);
 app.get("/login", loginPage);
 app.get("/browsepage", allUsers);
+app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.post("/login", login);
+app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
 app.use(onNotFound);
@@ -93,6 +95,15 @@ function allUsers(req, res, next) {
   } else {
     res.redirect("/login");
   }
+}
+
+function filterPage(req, res, next) {
+  res.render("addfilters.ejs");
+}
+
+function addFilters(req, res, next) {
+  console.log(req.body);
+  res.redirect("/browsepage")
 }
   
 function profile(req, res, next) {
@@ -177,4 +188,3 @@ function onNotFound(req, res, next) {
 
 // Listen on a port
 app.listen(3000);
-
