@@ -82,12 +82,23 @@ function allUsers(req, res, next) {
         })[0];
 
         // only display people that our user hasn't (dis)liked yet
-        let peopleToDisplay = []; 
-        for (let i = 0; i < data.length; i++) {
-          if (!currentUser.hasLiked.includes(data[i].id) && !currentUser.hasDisliked.includes(data[i].id) && data[i].id !== currentUser.id) {
-            peopleToDisplay.push(data[i])
+        function notRatedYet(person) {
+          if (!currentUser.hasLiked.includes(person.id) && !currentUser.hasDisliked.includes(person.id) && person.id !== currentUser.id) {
+          return person
           }
         }
+
+        // only display people that match our user's preferences
+        function matchPrefs(person) {
+          if (Array.isArray(currentUser.preference["gender"]) && currentUser.preference["gender"].includes(person.gender)) {
+            return person
+          } else {
+            return person.gender == currentUser.preference["gender"]
+          }
+        }
+        
+        console.log("prefers: " + currentUser.preference["gender"])
+        let peopleToDisplay = data.filter(notRatedYet).filter(matchPrefs)
 
         res.render("index.ejs", {data: peopleToDisplay});
       }
@@ -156,10 +167,7 @@ function likedUsers(req, res, next) {
           }
         }
 
-        let likedPageContent = {
-          matches: matches,
-          pending: pending
-        };
+        let likedPageContent = {matches, pending};
         
         // render the matching and pending arrays into the html
         res.render("likedpage.ejs", {data: likedPageContent});
