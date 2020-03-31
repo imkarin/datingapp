@@ -47,9 +47,11 @@ app.use(session({
 app.get("/", allUsers);
 app.get("/login", loginPage);
 app.get("/browsepage", allUsers);
+app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.post("/login", login);
+app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
 app.use(onNotFound);
@@ -59,40 +61,62 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  req.session.currentUser = req.body.user;
-  userid = req.session.currentUser;
+  userid = req.body.user;
   res.redirect("/");
   console.log("Logged in as user " + userid);
 }
 
 function allUsers(req, res, next) {
-  // if a user is logged in, load their data
   if (userid !== null) {
-    allUsersCollection.find().toArray(done);
-    
-    function done(err, data) {
+    // find current user
+    allUsersCollection.findOne({id: userid}, (err, data) => {
       if (err) {
-        next(err);
+        next (err);
       } else {
-        // find our current user in the db
-        let currentUser = data.filter((object) => {
-          return object.id == userid;
-        })[0];
+        const currentUser = data;
 
-        // only display people that our user hasn't (dis)liked yet
-        let peopleToDisplay = []; 
-        for (let i = 0; i < data.length; i++) {
-          if (!currentUser.hasLiked.includes(data[i].id) && !currentUser.hasDisliked.includes(data[i].id) && data[i].id !== currentUser.id) {
-            peopleToDisplay.push(data[i])
+        // display the people who match our user's filters
+        allUsersCollection.find({
+          $and: [
+            {id: {$ne: userid}},
+            {id: {$nin: currentUser.hasLiked}},
+            {id: {$nin: currentUser.hasDisliked}},
+            {gender: {$in: currentUser.preference["gender"]}},
+            {age: {$gte: currentUser.preference["minAge"]}}
+          ]
+        }).toArray(done)
+
+        function done(err, filteredPeople) {
+          if (err) {
+            next (err);
+          } else {
+            res.render("index.ejs", {data: filteredPeople})
           }
         }
-
-        res.render("index.ejs", {data: peopleToDisplay});
       }
-    } 
+    })
   } else {
     res.redirect("/login");
   }
+}
+
+function filterPage(req, res, next) {
+  res.render("addfilters.ejs");
+}
+
+function addFilters(req, res, next) {
+  // put filter-formdata in the user's preferences-object in the db
+  const userPrefs = {};
+  userPrefs["minAge"] = parseInt(req.body.years);
+  userPrefs["gender"] = req.body.gender;
+
+  // make sure the "gender" prefs is an array
+  if (!Array.isArray(userPrefs["gender"])) {
+    userPrefs["gender"] = req.body.gender.split(" ")
+  }
+
+  allUsersCollection.updateOne({id: userid}, { $set: {preference: userPrefs}});
+  res.redirect("/browsepage")
 }
   
 function profile(req, res, next) {
@@ -140,10 +164,7 @@ function likedUsers(req, res, next) {
           }
         }
 
-        let likedPageContent = {
-          matches: matches,
-          pending: pending
-        };
+        let likedPageContent = {matches, pending};
         
         // render the matching and pending arrays into the html
         res.render("likedpage.ejs", {data: likedPageContent});
@@ -177,4 +198,3 @@ function onNotFound(req, res, next) {
 
 // Listen on a port
 app.listen(3000);
-

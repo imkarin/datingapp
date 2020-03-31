@@ -16,6 +16,11 @@
     </header>
     
     <main>
+        <section>
+            <a href="addfilters">
+                <img src="../static/images/filter.png" alt="filter">
+            </a>
+        </section>
         <ul>
             <% for (let i = 0; i < data.length; i++) { %>
                 <li>
@@ -24,7 +29,7 @@
                             <img src="../static/images/<%= data[i].photo %>" alt="Profilepicture">
                         </a>  
                         <figcaption>
-                            <h2><%= data[i].name %></h2>
+                            <h2><%= data[i].name %>, <%= data[i].age %></h2>
                             <p><%= data[i].desc %></p>
                             <form action="/<%= data[i].id %>" method="post">
                                 <button class="likebutton" name="likebutton">❤</button>
