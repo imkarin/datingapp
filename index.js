@@ -61,48 +61,40 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  req.session.currentUser = req.body.user;
-  userid = req.session.currentUser;
+  userid = req.body.user;
   res.redirect("/");
   console.log("Logged in as user " + userid);
 }
 
 function allUsers(req, res, next) {
-  // if a user is logged in, load their data
   if (userid !== null) {
-    allUsersCollection.find().toArray(done);
-    
-    function done(err, data) {
+    // find current user
+    allUsersCollection.findOne({id: userid}, (err, data) => {
       if (err) {
-        next(err);
+        next (err);
       } else {
-        // find our current user in the db
-        let currentUser = data.filter((object) => {
-          return object.id == userid;
-        })[0];
+        const currentUser = data;
 
-        // only display people that our user hasn't (dis)liked yet
-        function notRatedYet(person) {
-          if (!currentUser.hasLiked.includes(person.id) && !currentUser.hasDisliked.includes(person.id) && person.id !== currentUser.id) {
-          return person
-          }
-        }
+        // display the people who match our user's filters
+        allUsersCollection.find({
+          $and: [
+            {id: {$ne: userid}},
+            {id: {$nin: currentUser.hasLiked}},
+            {id: {$nin: currentUser.hasDisliked}},
+            {gender: {$in: currentUser.preference["gender"]}},
+            {age: {$gte: currentUser.preference["minAge"]}}
+          ]
+        }).toArray(done)
 
-        // only display people that match our user's preferences
-        function matchPrefs(person) {
-          if (Array.isArray(currentUser.preference["gender"]) && currentUser.preference["gender"].includes(person.gender)) {
-            return person
+        function done(err, filteredPeople) {
+          if (err) {
+            next (err);
           } else {
-            return person.gender == currentUser.preference["gender"]
+            res.render("index.ejs", {data: filteredPeople})
           }
         }
-        
-        console.log("prefers: " + currentUser.preference["gender"])
-        let peopleToDisplay = data.filter(notRatedYet).filter(matchPrefs)
-
-        res.render("index.ejs", {data: peopleToDisplay});
       }
-    } 
+    })
   } else {
     res.redirect("/login");
   }
@@ -115,8 +107,13 @@ function filterPage(req, res, next) {
 function addFilters(req, res, next) {
   // put filter-formdata in the user's preferences-object in the db
   const userPrefs = {};
+  userPrefs["minAge"] = parseInt(req.body.years);
   userPrefs["gender"] = req.body.gender;
-  userPrefs.minAge = parseInt(req.body.years);
+
+  // make sure the "gender" prefs is an array
+  if (!Array.isArray(userPrefs["gender"])) {
+    userPrefs["gender"] = req.body.gender.split(" ")
+  }
 
   allUsersCollection.updateOne({id: userid}, { $set: {preference: userPrefs}});
   res.redirect("/browsepage")
