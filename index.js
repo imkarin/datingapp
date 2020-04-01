@@ -60,13 +60,26 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  allUsersCollection.findOne({id: req.body.user}, (err, data) => {
+  allUsersCollection.findOne({email: req.body.useremail}, (err, data) => {
     if (err) {
       next (err);
     } else {
-      req.session.user = data;
-      res.redirect("/");
-      console.log("Logged in as " + req.session.user.name);
+      // if e-mail doesn't exist
+      if (data == null) {
+        res.redirect("/login");
+        console.log("No user for this e-mail")
+        return;
+      }
+      // if e-mail and password match
+      if (req.body.password == data.password) {
+        req.session.user = data;
+        console.log("Logged in as " + req.session.user.name);
+        res.redirect("/");
+      } else {
+      // if password is incorrect
+      console.log("Incorrect password");
+      res.redirect("/login");
+      }
     }
   })
 }
