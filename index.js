@@ -20,7 +20,7 @@ require("dotenv").config();
 const mongo = require("mongodb");
 
 let db = null;
-let url = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + "/test?retryWrites=true&w=majority";
+const url = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + "/test?retryWrites=true&w=majority";
 
 mongo.MongoClient.connect(url, function (err, client) {
   if (err) {
@@ -34,7 +34,7 @@ mongo.MongoClient.connect(url, function (err, client) {
 })
 
 // Session --------------------------------------------------------------------------------------
-let session = require("express-session");
+const session = require("express-session");
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -42,7 +42,7 @@ app.use(session({
   saveUninitialized: true  
 }))
 
-// Handle routes ----------------------------------------------------------------------
+// Handle routes ---------------------------------------------------------------------------------
 app.get("/", allUsers);
 app.get("/login", loginPage);
 app.get("/browsepage", allUsers);
@@ -72,40 +72,30 @@ function login(req, res, next) {
 }
 
 function allUsers(req, res, next) {
-  // redirect to login page if no one's logged in
   if (!req.session.user) {
     res.redirect("/login");
     return;
   }
-  // find current user
-  allUsersCollection.findOne({_id: mongo.ObjectId(req.session.user._id)}, (err, data) => {
+
+  // display the people who match our user's filters
+  allUsersCollection.find({
+    $and: [
+      {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
+      {id: {$nin: req.session.user.hasLiked}},
+      {id: {$nin: req.session.user.hasDisliked}},
+      {gender: {$in: req.session.user.preference["gender"]}},
+      {age: {$gte: req.session.user.preference["minAge"]}}
+    ]
+  }).toArray(done)
+
+  function done(err, filteredPeople) {
     if (err) {
       next (err);
     } else {
-      const currentUser = data;
-
-      // display the people who match our user's filters
-      allUsersCollection.find({
-        $and: [
-          {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
-          {id: {$nin: currentUser.hasLiked}},
-          {id: {$nin: currentUser.hasDisliked}},
-          {gender: {$in: currentUser.preference["gender"]}},
-          {age: {$gte: currentUser.preference["minAge"]}}
-        ]
-      }).toArray(done)
-
-      function done(err, filteredPeople) {
-        if (err) {
-          next (err);
-        } else {
-          res.render("index.ejs", {data: filteredPeople})
-        }
-      }
+      res.render("index.ejs", {data: filteredPeople})
     }
-  })
+  }
 }
-
 
 function filterPage(req, res, next) {
   res.render("addfilters.ejs");
@@ -119,11 +109,17 @@ function addFilters(req, res, next) {
 
   // make sure the "gender" prefs is an array
   if (!Array.isArray(userPrefs["gender"])) {
-    userPrefs["gender"] = req.body.gender.split(" ")
+    userPrefs["gender"] = req.body.gender.split(" ");
   }
 
-  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, { $set: {preference: userPrefs}});
-  res.redirect("/browsepage")
+  // update the user's prefs in the database
+  allUsersCollection.updateOne(
+    {_id: mongo.ObjectId(req.session.user._id)},
+    { $set: {preference: userPrefs}})
+  
+  // then also update the userdata in the session
+    req.session.user.preference = userPrefs;
+    res.redirect("/");
 }
   
 function profile(req, res, next) {
@@ -143,43 +139,33 @@ function profile(req, res, next) {
 }
 
 function likedUsers(req, res, next) {
-  // redirect to login page if no one's logged in
   if (!req.session.user) {
     res.redirect("/login");
     return;
   }
-  allUsersCollection.find().toArray(done);
+
+  // divide our user's likes in matches and pending
+  let matches = [];
+  let pending = [];
+
+  allUsersCollection.find({id: {$in: req.session.user.hasLiked}}).toArray(done)
 
   function done(err, data) {
     if (err) {
-      next(err);
+      next (err);
     } else {
-      // find our current user in the db
-      let currentUser = data.filter((object) => {
-        return object._id == req.session.user._id;
-      })[0];
-      
-      // divide our user's likes in matches and pending
-      let matches = [];
-      let pending = [];
-      
-      // check who's matched and who's pending
       for (let i = 0; i < data.length; i++) {
-        // condition for matching: you have liked them, they have liked you, you haven't deleted them, they haven't deleted you
-        if (currentUser.hasLiked.includes(data[i].id) && data[i].hasLiked.includes(currentUser.id) && !currentUser.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(currentUser.id)) {
+        if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
           matches.push(data[i]);
-        // condition for pending: you have liked them, they haven't liked or disliked/deleted you yet
-        } else if (currentUser.hasLiked.includes(data[i].id) && !data[i].hasLiked.includes(currentUser.id) && !data[i].hasDisliked.includes(currentUser.id)) {
+        } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
           pending.push(data[i]);
         }
       }
-
-      let likedPageContent = {matches, pending};
-      
       // render the matching and pending arrays into the html
+      let likedPageContent = {matches, pending};
       res.render("likedpage.ejs", {data: likedPageContent});
     }
-  } 
+  }
 }
 
 function like(req, res, next) {
@@ -187,7 +173,8 @@ function like(req, res, next) {
   let id = req.params.id;
   allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
 
-  console.log(id + " liked by " + req.session.user.id)
+  // also update the userdata in the session
+  req.session.user.hasLiked.push(id);
   res.redirect("/");
 }
 
@@ -196,11 +183,13 @@ function remove(req, res, next) {
   let id = req.params.id;
   allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasDisliked": id}});
   
-  console.log(id + " disliked by " + req.session.user.id)
+  // also update the userdata in the session
+  req.session.user.hasDisliked.push(id);
+  res.redirect("/");
 }
 
 function onNotFound(req, res, next) {
-  res.status(404).sendFile(__dirname + "/static/notfound.html")
+  res.status(404).sendFile(__dirname + "/static/notfound.html");
 }
 
 // Listen on a port
