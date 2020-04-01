@@ -20,7 +20,6 @@ require("dotenv").config();
 const mongo = require("mongodb");
 
 let db = null;
-let userid = null;
 let url = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + "/test?retryWrites=true&w=majority";
 
 mongo.MongoClient.connect(url, function (err, client) {
@@ -61,44 +60,52 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  userid = req.body.user;
-  res.redirect("/");
-  console.log("Logged in as user " + userid);
+  allUsersCollection.findOne({id: req.body.user}, (err, data) => {
+    if (err) {
+      next (err);
+    } else {
+      req.session.user = data;
+      res.redirect("/");
+      console.log("Logged in as " + req.session.user.name);
+    }
+  })
 }
 
 function allUsers(req, res, next) {
-  if (userid !== null) {
-    // find current user
-    allUsersCollection.findOne({id: userid}, (err, data) => {
-      if (err) {
-        next (err);
-      } else {
-        const currentUser = data;
+  // redirect to login page if no one's logged in
+  if (!req.session.user) {
+    res.redirect("/login");
+    return;
+  }
+  // find current user
+  allUsersCollection.findOne({_id: mongo.ObjectId(req.session.user._id)}, (err, data) => {
+    if (err) {
+      next (err);
+    } else {
+      const currentUser = data;
 
-        // display the people who match our user's filters
-        allUsersCollection.find({
-          $and: [
-            {id: {$ne: userid}},
-            {id: {$nin: currentUser.hasLiked}},
-            {id: {$nin: currentUser.hasDisliked}},
-            {gender: {$in: currentUser.preference["gender"]}},
-            {age: {$gte: currentUser.preference["minAge"]}}
-          ]
-        }).toArray(done)
+      // display the people who match our user's filters
+      allUsersCollection.find({
+        $and: [
+          {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
+          {id: {$nin: currentUser.hasLiked}},
+          {id: {$nin: currentUser.hasDisliked}},
+          {gender: {$in: currentUser.preference["gender"]}},
+          {age: {$gte: currentUser.preference["minAge"]}}
+        ]
+      }).toArray(done)
 
-        function done(err, filteredPeople) {
-          if (err) {
-            next (err);
-          } else {
-            res.render("index.ejs", {data: filteredPeople})
-          }
+      function done(err, filteredPeople) {
+        if (err) {
+          next (err);
+        } else {
+          res.render("index.ejs", {data: filteredPeople})
         }
       }
-    })
-  } else {
-    res.redirect("/login");
-  }
+    }
+  })
 }
+
 
 function filterPage(req, res, next) {
   res.render("addfilters.ejs");
@@ -115,7 +122,7 @@ function addFilters(req, res, next) {
     userPrefs["gender"] = req.body.gender.split(" ")
   }
 
-  allUsersCollection.updateOne({id: userid}, { $set: {preference: userPrefs}});
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, { $set: {preference: userPrefs}});
   res.redirect("/browsepage")
 }
   
@@ -136,60 +143,60 @@ function profile(req, res, next) {
 }
 
 function likedUsers(req, res, next) {
-  if (userid !== null) {
-    // load all users data
-    allUsersCollection.find().toArray(done);
-
-    function done(err, data) {
-      if (err) {
-        next(err);
-      } else {
-        // find our current user in the db
-        let currentUser = data.filter((object) => {
-          return object.id == userid;
-        })[0];
-        
-        // divide our user's likes in matches and pending
-        let matches = [];
-        let pending = [];
-        
-        // check who's matched and who's pending
-        for (let i = 0; i < data.length; i++) {
-          // condition for matching: you have liked them, they have liked you, you haven't deleted them, they haven't deleted you
-          if (currentUser.hasLiked.includes(data[i].id) && data[i].hasLiked.includes(currentUser.id) && !currentUser.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(currentUser.id)) {
-            matches.push(data[i]);
-          // condition for pending: you have liked them, they haven't liked or disliked/deleted you yet
-          } else if (currentUser.hasLiked.includes(data[i].id) && !data[i].hasLiked.includes(currentUser.id) && !data[i].hasDisliked.includes(currentUser.id)) {
-            pending.push(data[i]);
-          }
-        }
-
-        let likedPageContent = {matches, pending};
-        
-        // render the matching and pending arrays into the html
-        res.render("likedpage.ejs", {data: likedPageContent});
-      }
-    } 
-  } else {
+  // redirect to login page if no one's logged in
+  if (!req.session.user) {
     res.redirect("/login");
+    return;
   }
+  allUsersCollection.find().toArray(done);
+
+  function done(err, data) {
+    if (err) {
+      next(err);
+    } else {
+      // find our current user in the db
+      let currentUser = data.filter((object) => {
+        return object._id == req.session.user._id;
+      })[0];
+      
+      // divide our user's likes in matches and pending
+      let matches = [];
+      let pending = [];
+      
+      // check who's matched and who's pending
+      for (let i = 0; i < data.length; i++) {
+        // condition for matching: you have liked them, they have liked you, you haven't deleted them, they haven't deleted you
+        if (currentUser.hasLiked.includes(data[i].id) && data[i].hasLiked.includes(currentUser.id) && !currentUser.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(currentUser.id)) {
+          matches.push(data[i]);
+        // condition for pending: you have liked them, they haven't liked or disliked/deleted you yet
+        } else if (currentUser.hasLiked.includes(data[i].id) && !data[i].hasLiked.includes(currentUser.id) && !data[i].hasDisliked.includes(currentUser.id)) {
+          pending.push(data[i]);
+        }
+      }
+
+      let likedPageContent = {matches, pending};
+      
+      // render the matching and pending arrays into the html
+      res.render("likedpage.ejs", {data: likedPageContent});
+    }
+  } 
 }
 
 function like(req, res, next) {
   // add liked person to our user's hasLiked array
   let id = req.params.id;
-  allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
 
-  console.log(id + " liked by " + userid)
+  console.log(id + " liked by " + req.session.user.id)
   res.redirect("/");
 }
 
 function remove(req, res, next) {
   // add disliked person to the user's hasDisliked array
   let id = req.params.id;
-  allUsersCollection.updateOne({id: userid}, {$push: {"hasDisliked": id}});
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasDisliked": id}});
   
-  console.log(id + " disliked by " + userid)
+  console.log(id + " disliked by " + req.session.user.id)
 }
 
 function onNotFound(req, res, next) {
