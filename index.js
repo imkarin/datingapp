@@ -33,8 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const mongo = require("mongodb");
 
 let db = null;
-let userid = null;
-let url = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + "/test?retryWrites=true&w=majority";
+const url = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@" + process.env.DB_HOST + "/test?retryWrites=true&w=majority";
 
 mongo.MongoClient.connect(url, function (err, client) {
   if (err) {
@@ -48,7 +47,7 @@ mongo.MongoClient.connect(url, function (err, client) {
 })
 
 // Session --------------------------------------------------------------------------------------
-let session = require("express-session");
+const session = require("express-session");
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -56,18 +55,20 @@ app.use(session({
   saveUninitialized: true  
 }))
 
-// Handle routes ----------------------------------------------------------------------
+// Handle routes ---------------------------------------------------------------------------------
 app.get("/", allUsers);
 app.get("/login", loginPage);
 app.get("/browsepage", allUsers);
+app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
 app.get("/profilepage/:id", profilepage);
 //app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
-//app.post("/:id", like);
 app.post("/succes.ejs", addMovie);
+app.post("/addfilters", addFilters);
+app.post("/:id", like);
 app.delete("/:id", remove);
 app.use(onNotFound);
 
@@ -76,40 +77,79 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  req.session.currentUser = req.body.user;
-  userid = req.session.currentUser;
-  res.redirect("/");
-  console.log("Logged in as user " + userid);
+  allUsersCollection.findOne({email: req.body.useremail}, (err, data) => {
+    if (err) {
+      next (err);
+    } else {
+      // if e-mail doesn't exist
+      if (data == null) {
+        res.redirect("/login");
+        console.log("No user for this e-mail")
+        return;
+      }
+      // if e-mail and password match
+      if (req.body.password == data.password) {
+        req.session.user = data;
+        console.log("Logged in as " + req.session.user.name);
+        res.redirect("/");
+      } else {
+      // if password is incorrect
+      console.log("Incorrect password");
+      res.redirect("/login");
+      }
+    }
+  })
 }
 
 function allUsers(req, res, next) {
-  // if a user is logged in, load their data
-  if (userid !== null) {
-    allUsersCollection.find().toArray(done);
-    
-    function done(err, data) {
-      if (err) {
-        next(err);
-      } else {
-        // find our current user in the db
-        let currentUser = data.filter((object) => {
-          return object.id == userid;
-        })[0];
-
-        // only display people that our user hasn't (dis)liked yet
-        let peopleToDisplay = []; 
-        for (let i = 0; i < data.length; i++) {
-          if (!currentUser.hasLiked.includes(data[i].id) && !currentUser.hasDisliked.includes(data[i].id) && data[i].id !== currentUser.id) {
-            peopleToDisplay.push(data[i])
-          }
-        }
-
-        res.render("index.ejs", {data: peopleToDisplay});
-      }
-    } 
-  } else {
+  if (!req.session.user) {
     res.redirect("/login");
+    return;
   }
+
+  // display the people who match our user's filters
+  allUsersCollection.find({
+    $and: [
+      {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
+      {id: {$nin: req.session.user.hasLiked}},
+      {id: {$nin: req.session.user.hasDisliked}},
+      {gender: {$in: req.session.user.preference["gender"]}},
+      {age: {$gte: req.session.user.preference["minAge"]}}
+    ]
+  }).toArray(done)
+
+  function done(err, filteredPeople) {
+    if (err) {
+      next (err);
+    } else {
+      res.render("index.ejs", {data: filteredPeople})
+    }
+  }
+}
+
+function filterPage(req, res, next) {
+  res.render("addfilters.ejs");
+}
+
+function addFilters(req, res, next) {
+  // put filter-formdata in the user's preferences-object in the db
+  const userPrefs = {};
+  userPrefs["minAge"] = parseInt(req.body.years);
+  userPrefs["gender"] = req.body.gender;
+
+  // make sure the "gender" prefs is an array
+  if (!Array.isArray(userPrefs["gender"])) {
+    userPrefs["gender"] = req.body.gender.split(" ");
+  }
+
+  // update the user's prefs in the database
+  allUsersCollection.updateOne(
+    {_id: mongo.ObjectId(req.session.user._id)},
+    { $set: {preference: userPrefs}})
+  
+  // then also update the userdata in the session
+    req.session.user.preference = userPrefs;
+    res.redirect("/");
 }
   
 function profile(req, res, next) {
@@ -189,68 +229,59 @@ function addMovie(req, res) {
 };
 
 function likedUsers(req, res, next) {
-  if (userid !== null) {
-    // load all users data
-    allUsersCollection.find().toArray(done);
-
-    function done(err, data) {
-      if (err) {
-        next(err);
-      } else {
-        // find our current user in the db
-        let currentUser = data.filter((object) => {
-          return object.id == userid;
-        })[0];
-        
-        // divide our user's likes in matches and pending
-        let matches = [];
-        let pending = [];
-        
-        // check who's matched and who's pending
-        for (let i = 0; i < data.length; i++) {
-          // condition for matching: you have liked them, they have liked you, you haven't deleted them, they haven't deleted you
-          if (currentUser.hasLiked.includes(data[i].id) && data[i].hasLiked.includes(currentUser.id) && !currentUser.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(currentUser.id)) {
-            matches.push(data[i]);
-          // condition for pending: you have liked them, they haven't liked or disliked/deleted you yet
-          } else if (currentUser.hasLiked.includes(data[i].id) && !data[i].hasLiked.includes(currentUser.id) && !data[i].hasDisliked.includes(currentUser.id)) {
-            pending.push(data[i]);
-          }
-        }
-
-        let likedPageContent = {
-          matches: matches,
-          pending: pending
-        };
-        
-        // render the matching and pending arrays into the html
-        res.render("likedpage.ejs", {data: likedPageContent});
-      }
-    } 
-  } else {
+  if (!req.session.user) {
     res.redirect("/login");
+    return;
+  }
+
+  // divide our user's likes in matches and pending
+  let matches = [];
+  let pending = [];
+
+  allUsersCollection.find({id: {$in: req.session.user.hasLiked}}).toArray(done)
+
+  function done(err, data) {
+    if (err) {
+      next (err);
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+          matches.push(data[i]);
+        } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+          pending.push(data[i]);
+        }
+      }
+      // render the matching and pending arrays into the html
+      let likedPageContent = {matches, pending};
+      res.render("likedpage.ejs", {data: likedPageContent});
+    }
   }
 }
 
 function like(req, res, next) {
   // add liked person to our user's hasLiked array
   let id = req.params.id;
-  allUsersCollection.updateOne({id: userid}, {$push: {"hasLiked": id}});
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasLiked": id}});
 
-  console.log(id + " liked by " + userid)
+  // also update the userdata in the session
+  req.session.user.hasLiked.push(id);
   res.redirect("/");
 }
 
 function remove(req, res, next) {
   // add disliked person to the user's hasDisliked array
   let id = req.params.id;
-  allUsersCollection.updateOne({id: userid}, {$push: {"hasDisliked": id}});
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, {$push: {"hasDisliked": id}});
   
-  console.log(id + " disliked by " + userid)
+  // also update the userdata in the session
+  req.session.user.hasDisliked.push(id);
+  res.redirect("/");
 }
 
 function onNotFound(req, res, next) {
-  res.status(404).sendFile(__dirname + "/static/notfound.html")
+  res.status(404).sendFile(__dirname + "/static/notfound.html");
 }
 
 // Listen on a port
-app.listen(3000, () => console.log("Server is running..."));
+
+app.listen(3000);

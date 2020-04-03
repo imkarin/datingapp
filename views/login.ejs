@@ -14,17 +14,15 @@
     <main>
         <h1>Login</h1>
         <form action="/login" method="post">
-            <label>Choose a user
-                <select name="user">
-                    <option value="0001">Olivia Delroy</option>
-                    <option value="0002">Liz Avage</option>
-                    <option value="0003">Eve Watts</option>
-                    <option value="0004">Kayle Solomon</option>
-                    <option value="0005">Nina Suey</option>
-                    <option value="0006">Robin Mahnken</option>
-                </select>
+            <label>
+                E-mail
+                <input type="email" name="useremail" required>
             </label>
-            <input type="submit">
+            <label>
+                Password
+                <input type="password" name="password" required>
+            </label>
+            <input type="submit" value="Login">
         </form>
     </main>
 </body>

@@ -6,7 +6,7 @@
 
 body {
     background: rgb(247, 247, 247);
-    font-size: 1em;
+    font-size: 16px;
     font-family: 'Roboto Light', sans-serif;
     color: #000;
 }
@@ -57,9 +57,23 @@ main {
     margin-right: auto;
 }
 
+/* browse page, filter button */
+main > section:first-child {
+    position: absolute;
+    z-index: 1;
+    left: 15px;
+    top: 15px;
+}
+
+main > section:first-child img {
+    width: 25px;
+    opacity: .5;
+}
+
 /* browse page, people cards (click for detail, like or dislike */
 main > ul {
-    height: 100%;
+    margin-top: 30px;
+    height: calc(100% - 30px);
     position: relative;
     list-style: none;
 }
@@ -204,8 +218,32 @@ main > p:last-child {
     }
 }
 
+/* login screen */
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+input[type=email], input[type=password] {
+    margin: 5px 0;
+    width: 100%;
+    height: 30px;
+}
+
+input[type=submit] {
+    margin-top: 10px;
+    width: 100%;
+    font-family: 'Roboto Light', sans-serif;
+    font-size: .9em;
+    color: #FFFFFF;
+    padding: 10px 25px;
+    border-radius: 25px;
+    background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
+    border: none;
+}
+
 /* bottom nav */
-nav > img {
+nav > img:first-of-type {
     display: none;
 }
 
@@ -252,7 +290,7 @@ nav ul > li:nth-of-type(2) > a > img {
 
 @media only screen and (min-width: 800px) {
     /* bottom nav */
-    nav > img {
+    nav > img:first-of-type {
         width: 150px;
         align-self: center;
         display: block;
