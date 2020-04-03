@@ -43,7 +43,7 @@ mongo.MongoClient.connect(url, function (err, client) {
   console.log("Connected to database.");
   
   // the allUsersCollection contains general data about all user accounts
-  allUsersCollection = db.collection("users");
+  allUsersCollection = db.collection(process.env.DB_COLLECTION);
 })
 
 // Session --------------------------------------------------------------------------------------
