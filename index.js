@@ -63,9 +63,10 @@ app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
-//app.get("/succes", (req, res) => res.render("succes.ejs"));
+app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
-app.post("/succes.ejs", addMovie);
+app.post("/profilepage.ejs", addMovie);
+app.post("/succes.ejs", removeMovie);
 app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
@@ -176,8 +177,6 @@ function profilepage(req, res) {
     allUsersCollection.findOne({id: req.session.user.id}, (err, data) => {
       if (err){
         console.log("Error, cannot find the user");
-      } else {
-        console.log("Found user")
       };
 
       res.render("profilepage.ejs", {
@@ -208,13 +207,47 @@ function addMovie(req, res) {
         description: body.results[0].overview
       }}}, (err, req, res) => {
         if (err) {
-          console.log('could not add movie to movies');
+          console.log("could not add movie to movies");
         } else {
-          console.log('update confirmed, movie is added')
+          console.log("update confirmed, movie is added");
         };
       });
     });
+    res.render('/profilepage.ejs');
     res.redirect('/profilepage');
+  };
+};
+
+function removeMovie(req, res) {
+  let selectedMovie = req.body.movieTitle;
+  console.log("function removeMovie...")
+  console.log(selectedMovie);
+
+  if (!req.session.user) {
+    res.redirect("/login")
+  } else {
+    // assign the session user name to a variable
+    let userSessionID = req.session.user.id;
+
+    /*allUsersCollection.findOne({id: userSessionID}, {movies: {name: selectedMovie}}, (err, req, res) => {
+      if (err) {
+        console.log("could not find movies");
+        console.log(err);
+      } else {
+        console.log("found movie")
+      }
+    });*/
+
+    // remove the movie in database
+    allUsersCollection.updateOne({id: userSessionID}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
+      if (err) {
+        console.log("could not remove movie");
+        console.log(err);
+      } else {
+        console.log("removed movie");
+      };
+    });
+    res.redirect("/profilepage");
   };
 };
 
