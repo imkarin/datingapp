@@ -229,15 +229,6 @@ function removeMovie(req, res) {
     // assign the session user name to a variable
     let userSessionID = req.session.user.id;
 
-    /*allUsersCollection.findOne({id: userSessionID}, {movies: {name: selectedMovie}}, (err, req, res) => {
-      if (err) {
-        console.log("could not find movies");
-        console.log(err);
-      } else {
-        console.log("found movie")
-      }
-    });*/
-
     // remove the movie in database
     allUsersCollection.updateOne({id: userSessionID}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
       if (err) {
