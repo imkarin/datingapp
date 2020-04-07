@@ -63,7 +63,6 @@ app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
-app.get("/profilepage/:id", profilepage);
 //app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
 app.post("/succes.ejs", addMovie);
@@ -170,22 +169,21 @@ function profile(req, res, next) {
 }
 
 function profilepage(req, res) {
-  // load profile data
-  let id = req.params.id;
-  console.log("userid= " + userid + " id= " + id);
-  allUsersCollection.findOne({
-    id: id
-  }, done);
+  if (!req.session.user) {
+    res.redirect("/login");
+    return
+  } else {
+    allUsersCollection.findOne({id: req.session.user.id}, (err, data) => {
+      if (err){
+        console.log("Error, cannot find the user");
+      } else {
+        console.log("Found user")
+      };
 
-  function done(err, data) {
-    if (err) {
-      console.log("Couldn't find user");
-    } else {
-      console.log("Found user");
       res.render("profilepage.ejs", {
         data: data
       });
-    };
+    });
   };
 };
 
