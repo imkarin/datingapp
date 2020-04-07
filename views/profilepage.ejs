@@ -12,10 +12,10 @@
 		<img class="profileImg" src="../static/images/<%= data.photo %>" alt="">
 		<p>Naam: <%= data.name %></p>
 		<p>Leeftijd: <%= data.age %></p>
-		<p>Description: <% data.desc %></p>
+		<p>Description: <%= data.desc %></p>
 		<br>
 		<br>
-		<form action="/succes.ejs" method="POST">
+		<form action="/profilepage.ejs" method="POST">
 			<label for="movieTitle">Naam film:</label>
 			<input name="movieTitle" type="text">
 			<button type="submit">Voeg film toe</button>
@@ -26,14 +26,19 @@
 		<% data.movies.forEach(function(data) {
 			%>
 			<div>
-				<img src="<%= data.posterImage %>" alt="<%= data.title %>">
+				<img class="movieImg" src="<%= data.posterImage %>" alt="<%= data.title %>">
 				<p>Title: <%= data.title %></p>
 				<p>Description: <%= data.description %></p>
+				<form action="/succes.ejs" method="POST">
+					<input type="hidden" name="movieTitle" value="<%= data.title %>">
+					<button class="deleteButton" type="submit">Verwijder</button>
+				</form>
 			</div>
 			<% }); %>
 	</main>
 
 	<%- include ('nav') -%>
 	
+	<!-- <script src="../static/scripts/profilepage.js"></script> -->
 </body>
 </html>
