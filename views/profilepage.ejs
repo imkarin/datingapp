@@ -3,13 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="../static/styles/browsepage.css">
+	<link rel="stylesheet" href="../static/styles/profilepage.css">
 	<title>Your profilepage</title>
 </head>
 <body>
 	<main>
 		<h1>Your profile</h1>
-		<img src="../static/images/<%= data.photo %>" alt="">
+		<img class="profileImg" src="../static/images/<%= data.photo %>" alt="">
 		<p>Naam: <%= data.name %></p>
 		<p>Leeftijd: <%= data.age %></p>
 		<p>Description: <% data.desc %></p>
@@ -26,8 +26,9 @@
 		<% data.movies.forEach(function(data) {
 			%>
 			<div>
-				<img src="<%= data[1] %>" alt="">
-				<p>Title: <%= data[0] %></p>
+				<img src="<%= data.posterImage %>" alt="<%= data.title %>">
+				<p>Title: <%= data.title %></p>
+				<p>Description: <%= data.description %></p>
 			</div>
 			<% }); %>
 	</main>
