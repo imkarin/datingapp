@@ -51,10 +51,10 @@ main {
     border-radius: 15px;
 
     width:100%;
-    height: calc(100vh - 60px); /* viewport height - nav height */
     max-width: 1150px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 40px;
 }
 
 /* browse page, filter button */
@@ -174,10 +174,10 @@ main > p:last-child {
 @media only screen and (min-width: 800px) {
     body {
         height: 100vh;
-        overflow: hidden;
+        
     }
     main {
-        overflow-x:hidden;
+        
         margin: 50vh auto;
         transform: translateY(-50%);
         padding: 25px;
@@ -322,9 +322,17 @@ nav ul > li:nth-of-type(2) > a > img {
     }
 }
 
+nav ul > li:first-of-type > a > img {
+    opacity: 1;
+}
+
 .profileImg {
     width: 210px;
     height: 210px;
     border-radius: 100%;
     object-fit: cover;
+}
+
+.movieImg {
+    width: 80%;
 }
