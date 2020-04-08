@@ -300,16 +300,3 @@ function onNotFound(req, res, next) {
 
 // Listen on a port
 app.listen(3000);
-
-// argon2 test
-// async function hashPassword() {
-//   try {
-//     const hash = await argon2.hash("robin");
-//     console.log('hashed pw: ' + hash);
-//   } catch (err) {
-//     throw (err);
-//   }
-// }
-
-// hashPassword();
-
