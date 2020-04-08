@@ -63,10 +63,10 @@ app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
-app.get("/profilepage/:id", profilepage);
-//app.get("/succes", (req, res) => res.render("succes.ejs"));
+app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
-app.post("/succes.ejs", addMovie);
+app.post("/profilepage.ejs", addMovie);
+app.post("/succes.ejs", removeMovie);
 app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
@@ -170,62 +170,76 @@ function profile(req, res, next) {
 }
 
 function profilepage(req, res) {
-  // load profile data
-  let id = req.params.id;
-  console.log("userid= " + userid + " id= " + id);
-  allUsersCollection.findOne({
-    id: id
-  }, done);
+  if (!req.session.user) {
+    res.redirect("/login");
+    return
+  } else {
+    allUsersCollection.findOne({id: req.session.user.id}, (err, data) => {
+      if (err){
+        console.log("Error, cannot find the user");
+      };
 
-  function done(err, data) {
-    if (err) {
-      console.log("Couldn't find user");
-    } else {
-      console.log("Found user");
       res.render("profilepage.ejs", {
         data: data
       });
-    };
+    });
   };
 };
 
 function addMovie(req, res) {
-  // load user id
-  let id = req.params.id;
-  console.log("id= ", userid)
-  //the movie the user adds to his/her profile
-  let insertedMovie = req.body.movieTitle
+  // the movie the user adds to his profile
+  let insertedMovie = req.body.movieTitle;
 
-  //log this movie for confirmation
-  console.log("Movie title input: ", insertedMovie);
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    // assign the session user name to a variable
+    let userSessionID = req.session.user.id;
+  
+    // search in api for the inserted movie
+    request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
+      body = JSON.parse(body); // parse the outcome to object, so requesting data is possible
+      let posterLink = baseImgURL + body.results[0].poster_path; // the path to the movie poster image
 
-  //search in api for the inserted movie
-  request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
-    body = JSON.parse(body); //parse the outcome to object, so requesting data is possible
-    console.log("Movie title from api: ", body.results[0].original_title); //confirming the title
-    let posterLink = baseImgURL + body.results[0].poster_path; //the path to the movie poster image
-    console.log("imagepath: ", posterLink);
+      allUsersCollection.updateOne({id: userSessionID}, { $addToSet: {movies: {
+        title: body.results[0].original_title,
+        posterImage: posterLink,
+        description: body.results[0].overview
+      }}}, (err, req, res) => {
+        if (err) {
+          console.log("could not add movie to movies");
+        } else {
+          console.log("update confirmed, movie is added");
+        };
+      });
+    });
+    res.render('/profilepage.ejs');
+    res.redirect('/profilepage');
+  };
+};
 
-  //Add the title of the movie into the 'movies' array in the database
-  allUsersCollection.updateOne({id: "'" + id + "'"}, { $addToSet: {movies: [body.results[0].original_title, posterLink] }}, function(err, req, res) {
-    if (err) {
-      console.log("Error, could not update database");
-    } else {
-      console.log("Update confirmed, added/updated " + body.results[0].original_title + ' and ' + baseImgURL + body.results[0].poster_path + ' to database');
-    };
-    // closes the function that is in updateOne()
-  });
-  //closes the function that is in request()    
-  });
+function removeMovie(req, res) {
+  let selectedMovie = req.body.movieTitle;
+  console.log("function removeMovie...")
+  console.log(selectedMovie);
 
-  //render the inserted data to the succes.ejs page
-  res.render("succes.ejs",{
-    data: req.body
-  });
+  if (!req.session.user) {
+    res.redirect("/login")
+  } else {
+    // assign the session user name to a variable
+    let userSessionID = req.session.user.id;
 
-  //Confirmation for the data that is added to the database
-    console.log('This data is added to the database:', data);
-    console.log('title: ', req.body.movieTitle);
+    // remove the movie in database
+    allUsersCollection.updateOne({id: userSessionID}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
+      if (err) {
+        console.log("could not remove movie");
+        console.log(err);
+      } else {
+        console.log("removed movie");
+      };
+    });
+    res.redirect("/profilepage");
+  };
 };
 
 function likedUsers(req, res, next) {
