@@ -213,7 +213,6 @@ function addMovie(req, res) {
         };
       });
     });
-    res.render('/profilepage.ejs');
     res.redirect('/profilepage');
   };
 };
