@@ -63,6 +63,7 @@ app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
+app.get("/register", (req, res) => res.render("register.ejs")); 
 app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
 app.post("/profilepage.ejs", addMovie);
