@@ -334,5 +334,67 @@ nav ul > li:first-of-type > a > img {
 }
 
 .movieImg {
-    width: 80%;
+    width: 100%;
+    filter: brightness(50%);
+}
+
+.movieContainer {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.infoContainer {
+    position: absolute;
+    top: 85%;
+    color: white;
+    margin-left: 5px;
+}
+
+.movieTitle {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.movieDesc {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 300px;
+    margin-top: 10px;
+}
+
+.deleteForm {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+}
+
+.deleteButton {
+    border: none;
+    background: none;
+    color: white;
+}
+
+.addButton {
+    background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    color: white;
+    box-shadow: 1px 1px 5px 0px rgba(168,168,168,1);
+}
+
+.movieInput {
+    border: 1px solid lightgrey;
+    padding: 10px;
+    color: black;
+}
+
+.movieInput:focus {
+    border: 1px solid #9c9c9c;
+    outline: none;
+}
+
+.movieInput::placeholder {
+    color: lightgrey;
 }

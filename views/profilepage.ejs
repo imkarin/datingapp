@@ -17,19 +17,21 @@
 		<br>
 		<form action="/profilepage.ejs" method="POST">
 			<label for="movieTitle">Naam film:</label>
-			<input name="movieTitle" type="text">
-			<button type="submit">Voeg film toe</button>
+			<input name="movieTitle" type="text" class="movieInput" placeholder="Avengers: Endgame">
+			<button type="submit" class="addButton">Voeg film toe</button>
 		</form>
 		<br>
 		<br>
 		<h2>Mijn films:</h2>
 		<% data.movies.forEach(function(data) {
 			%>
-			<div>
+			<div class="movieContainer">
 				<img class="movieImg" src="<%= data.posterImage %>" alt="<%= data.title %>">
-				<p>Title: <%= data.title %></p>
-				<p>Description: <%= data.description %></p>
-				<form action="/succes.ejs" method="POST">
+				<div class="infoContainer">
+				<p class="movieTitle"><%= data.title %></p>
+				<p class="movieDesc"><%= data.description %></p>
+				</div>
+				<form action="/succes.ejs" method="POST" class="deleteForm">
 					<input type="hidden" name="movieTitle" value="<%= data.title %>">
 					<button class="deleteButton" type="submit">Verwijder</button>
 				</form>
