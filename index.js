@@ -29,6 +29,9 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Use Argon2 (password hashing) -----------------------------------------------------------------
+const argon2 = require('argon2');
+
 // MongoDB ---------------------------------------------------------------------------------------
 const mongo = require("mongodb");
 
@@ -77,25 +80,25 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  allUsersCollection.findOne({email: req.body.useremail}, (err, data) => {
+  allUsersCollection.findOne({email: req.body.useremail}, async (err, data) => {
     if (err) {
       next (err);
     } else {
       // if e-mail doesn't exist
       if (data == null) {
         res.redirect("/login");
-        console.log("No user for this e-mail")
+        console.log("No user for this e-mail");
         return;
       }
       // if e-mail and password match
-      if (req.body.password == data.password) {
+      if (await argon2.verify(data.password, req.body.password)) {
         req.session.user = data;
         console.log("Logged in as " + req.session.user.name);
         res.redirect("/");
       } else {
-      // if password is incorrect
-      console.log("Incorrect password");
-      res.redirect("/login");
+        // if they don't match
+        console.log("Incorrect password");
+        res.redirect("/login");
       }
     }
   })
@@ -296,5 +299,17 @@ function onNotFound(req, res, next) {
 }
 
 // Listen on a port
-
 app.listen(3000);
+
+// argon2 test
+// async function hashPassword() {
+//   try {
+//     const hash = await argon2.hash("robin");
+//     console.log('hashed pw: ' + hash);
+//   } catch (err) {
+//     throw (err);
+//   }
+// }
+
+// hashPassword();
+
