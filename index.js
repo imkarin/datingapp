@@ -155,7 +155,6 @@ function addFilters(req, res, next) {
 function profile(req, res, next) {
   // load profile data
   let id = req.params.id;
-  console.log("id= " + id + " userid= " + userid);
   allUsersCollection.findOne({
     id: id
   }, done)
