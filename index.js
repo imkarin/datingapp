@@ -8,9 +8,6 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-// FileSystem --------------------------------------------------------------------------------------
-const fs = require('fs-extra');
-
 // Multer --------------------------------------------------------------------------------------
 const multer = require("multer");
 let storage = multer.diskStorage({
