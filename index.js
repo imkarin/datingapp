@@ -72,6 +72,9 @@ mongo.MongoClient.connect(url, function (err, client) {
   allUsersCollection = db.collection(process.env.DB_COLLECTION);
 })
 
+// Mongoose -------------------------------------------------------------------------------------
+const mongoose = require('mongoose');
+
 // Session --------------------------------------------------------------------------------------
 const session = require("express-session");
 
@@ -135,12 +138,16 @@ function allUsers(req, res, next) {
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // display the people who match our user's filters
   allUsersCollection.find({
     $and: [
       {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
-      {id: {$nin: req.session.user.hasLiked}},
-      {id: {$nin: req.session.user.hasDisliked}},
+      {_id: {$nin: likedObjects}},
+      {_id: {$nin: dislikedObjects}},
       {gender: {$in: req.session.user.preference["gender"]}},
       {age: {$gte: req.session.user.preference["minAge"]}}
     ]
@@ -308,20 +315,28 @@ function likedUsers(req, res, next) {
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // divide our user's likes in matches and pending
   let matches = [];
   let pending = [];
 
-  allUsersCollection.find({id: {$in: req.session.user.hasLiked}}).toArray(done)
+  allUsersCollection.find({
+    $and: [
+      {_id: {$in: likedObjects}},
+      {_id: {$nin: dislikedObjects}}
+    ]}).toArray(done);
 
   function done(err, data) {
     if (err) {
       next (err);
     } else {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        if (data[i].hasLiked.includes(req.session.user._id) && !req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           matches.push(data[i]);
-        } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        } else if (!req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           pending.push(data[i]);
         }
       }

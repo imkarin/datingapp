@@ -31,10 +31,10 @@
                         <figcaption>
                             <h2><%= data[i].name %>, <%= data[i].age %></h2>
                             <p><%= data[i].desc %></p>
-                            <form action="/<%= data[i].id %>" method="post">
+                            <form action="/<%= data[i]._id %>" method="post">
                                 <button class="likebutton" name="likebutton">❤</button>
                             </form>
-                            <button data-id="<%= data[i].id %>" class="dislikebutton" name="dislikebutton">x</button>
+                            <button data-id="<%= data[i]._id %>" class="dislikebutton" name="dislikebutton">x</button>
                         </figcaption>
                     </figure>
                 </li>

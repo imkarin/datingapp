@@ -13,10 +13,10 @@
     <header>
         <a href="/">X</a>
         <img src="../static/images/<%= data.photo %>" alt="Profilepicture">
-            <form action="/<%= data.id %>" method="post">
+            <form action="/<%= data._id %>" method="post">
                 <button class="likebutton" name="likebutton">❤</button>
             </form>
-            <button data-id="<%= data.id %>" class="dislikebutton" name="dislikebutton">x</button>
+            <button data-id="<%= data._id %>" class="dislikebutton" name="dislikebutton">x</button>
         </form>
     </header>
     
