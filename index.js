@@ -184,7 +184,7 @@ function profile(req, res, next) {
   // load profile data
   let id = req.params.id;
   allUsersCollection.findOne({
-    id: id
+    _id: mongo.ObjectId(id)
   }, done)
   
   function done(err, data) {

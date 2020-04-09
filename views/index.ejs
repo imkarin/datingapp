@@ -25,7 +25,7 @@
             <% for (let i = 0; i < data.length; i++) { %>
                 <li>
                     <figure>
-                        <a href="/profile/<%= data[i].id %>">
+                        <a href="/profile/<%= data[i]._id %>">
                             <img src="../static/images/<%= data[i].photo %>" alt="Profilepicture">
                         </a>  
                         <figcaption>
