@@ -11,8 +11,8 @@
 	<body>
 		<main>
 			<h1>Sign up</h1>
-			<form action="" method="POST">
-				<fieldset>
+			<form action="/register.ejs" method="POST" enctype="multipart/form-data">
+				<fieldset class="personalField">
 					<h2>Personal</h2>
 					<hr>
 					<label for="">
@@ -20,12 +20,17 @@
 						<input type="text" name="name" placeholder="John Doe" required>
 					</label>
 					<label for="">
+						Profile picture
+						<input type="file" name="userImage" accept="image/*" required>
+						<p class="fileInvalid">File must be a .jpg, jpeg, .png or .gif!</p>
+					</label>
+					<label for="">
 						Gender
 						</label>
-						<input type="radio" name="gender" id="male">
+						<input type="radio" name="gender" id="male" value="male">
 						<label for="male">Male</label>
 						
-						<input type="radio" name="gender" id="female">
+						<input type="radio" name="gender" id="female" value="female">
 						<label for="female">Female</label>
 					
 					<label for="">
@@ -36,8 +41,23 @@
 					</label>
 					<label for="">
 						Tell something about yourself
-						<textarea name="" id="" cols="40" rows="5"></textarea>
+						<textarea name="desc" id="" cols="40" rows="5"></textarea>
 					</label>
+
+					<label for="">
+						I like
+						</label>
+						<input type="radio" name="prefGenderMale" id="prefMale" class="prefInput" value="male">
+						<label for="prefMale">Men</label>
+						
+						<input type="radio" name="prefGenderFemale" id="prefFemale" class="prefInput" value="female">
+						<label for="prefFemale">Women</label>
+						<label for="">
+							Minimum age</label>
+							<div class="sliderContainer">
+								<input type="range" name="prefAge" min="18">
+								<p class="valueAge"></p>
+							</div>
 				</fieldset>
 				<fieldset>
 					<h2>Account</h2>
@@ -309,21 +329,6 @@
 				<a href="/login">Log in</a>
 			</form>
 		</main>
-		<script>
-			let dateInput = document.querySelector('input[type="date"]');
-			let ageInvalid = document.querySelector('.ageInvalid');
-
-			function validate(){
-			if (!dateInput.validity.valid) {
-				ageInvalid.style.display = "block";
-				ageInvalid.style.color = "red";
-			} else {
-				ageInvalid.style.display = "none";
-			}
-		}
-
-			dateInput.addEventListener('click', validate);
-
-		</script>
+		<script src="../static/scripts/register.js"></script>
 	</body>
 </html>
