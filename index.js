@@ -72,6 +72,9 @@ mongo.MongoClient.connect(url, function (err, client) {
   allUsersCollection = db.collection(process.env.DB_COLLECTION);
 })
 
+// Mongoose -------------------------------------------------------------------------------------
+const mongoose = require('mongoose');
+
 // Session --------------------------------------------------------------------------------------
 const session = require("express-session");
 
@@ -135,12 +138,16 @@ function allUsers(req, res, next) {
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // display the people who match our user's filters
   allUsersCollection.find({
     $and: [
       {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
-      {id: {$nin: req.session.user.hasLiked}},
-      {id: {$nin: req.session.user.hasDisliked}},
+      {_id: {$nin: likedObjects}},
+      {_id: {$nin: dislikedObjects}},
       {gender: {$in: req.session.user.preference["gender"]}},
       {age: {$gte: req.session.user.preference["minAge"]}}
     ]
@@ -184,7 +191,7 @@ function profile(req, res, next) {
   // load profile data
   let id = req.params.id;
   allUsersCollection.findOne({
-    id: id
+    _id: mongo.ObjectId(id)
   }, done)
   
   function done(err, data) {
@@ -201,7 +208,7 @@ function profilepage(req, res) {
     res.redirect("/login");
     return
   } else {
-    allUsersCollection.findOne({id: req.session.user.id}, (err, data) => {
+    allUsersCollection.findOne({_id: mongo.ObjectId(req.session.user._id)}, (err, data) => {
       if (err){
         console.log("Error, cannot find the user");
       };
@@ -221,14 +228,14 @@ function addMovie(req, res) {
     res.redirect("/login");
   } else {
     // assign the session user name to a variable
-    let userSessionID = req.session.user.id;
+    let userSessionID = req.session.user._id;
   
     // search in api for the inserted movie
     request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
       body = JSON.parse(body); // parse the outcome to object, so requesting data is possible
       let posterLink = baseImgURL + body.results[0].poster_path; // the path to the movie poster image
 
-      allUsersCollection.updateOne({id: userSessionID}, { $addToSet: {movies: {
+      allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, { $addToSet: {movies: {
         title: body.results[0].original_title,
         posterImage: posterLink,
         description: body.results[0].overview
@@ -253,10 +260,10 @@ function removeMovie(req, res) {
     res.redirect("/login")
   } else {
     // assign the session user name to a variable
-    let userSessionID = req.session.user.id;
+    let userSessionID = req.session.user._id;
 
     // remove the movie in database
-    allUsersCollection.updateOne({id: userSessionID}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
+    allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
       if (err) {
         console.log("could not remove movie");
         console.log(err);
@@ -308,20 +315,28 @@ function likedUsers(req, res, next) {
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // divide our user's likes in matches and pending
   let matches = [];
   let pending = [];
 
-  allUsersCollection.find({id: {$in: req.session.user.hasLiked}}).toArray(done)
+  allUsersCollection.find({
+    $and: [
+      {_id: {$in: likedObjects}},
+      {_id: {$nin: dislikedObjects}}
+    ]}).toArray(done);
 
   function done(err, data) {
     if (err) {
       next (err);
     } else {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        if (data[i].hasLiked.includes(req.session.user._id) && !req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           matches.push(data[i]);
-        } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        } else if (!req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           pending.push(data[i]);
         }
       }
