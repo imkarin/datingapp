@@ -8,6 +8,29 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+// Multer --------------------------------------------------------------------------------------
+const multer = require("multer");
+let storage = multer.diskStorage({
+  destination: function (req, files, cb) {
+    cb(null, "static/images/")
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+});
+let fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+    ) {
+    cb(null, true);
+  } else {
+    cb(new Error("File format should be PNG,JPG,JPEG"), false);
+  }
+};
+let upload = multer({ storage: storage, fileFilter: fileFilter });
+
 // Movie database API ----------------------------------------------------------------------------
 const request = require('request');
   // This is the baseURl for accessing the API database
@@ -66,10 +89,12 @@ app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
+app.get("/register", (req, res) => res.render("register.ejs")); 
 app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
 app.post("/profilepage.ejs", addMovie);
 app.post("/succes.ejs", removeMovie);
+app.post("/register.ejs", upload.single("userImage"), registerUser);
 app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
@@ -215,7 +240,6 @@ function addMovie(req, res) {
         };
       });
     });
-    res.render('/profilepage.ejs');
     res.redirect('/profilepage');
   };
 };
@@ -242,6 +266,40 @@ function removeMovie(req, res) {
     });
     res.redirect("/profilepage");
   };
+};
+
+async function registerUser(req, res, file) {
+  let hash = await argon2.hash(req.body.password); // hash the inserted password
+
+  let birthdate = req.body.birthday; // get inserted date
+  let birthday = +new Date(birthdate);
+  let age = Math.floor((Date.now() - birthday) / 31557600000); // calculate age
+
+  allUsersCollection.insertOne({
+    email: req.body.useremail,
+    password: hash,
+    name: req.body.name,
+    age: age,
+    gender: req.body.gender,
+    photo: req.file.originalname,
+    desc: req.body.desc,
+    preference: {
+      gender: [req.body.prefGenderMale, req.body.prefGenderFemale],
+      minAge: parseInt(req.body.prefAge)
+    },
+    location: req.body.location,
+    movies: [],
+    hasLiked: [],
+    hasDisliked: [],
+    messages: {}
+  }, (err, req, res) => {
+    if (err) {
+      console.log("Could not post/add form");
+    } else {
+      console.log("Added user!");
+    }
+  })
+  res.redirect("/login");
 };
 
 function likedUsers(req, res, next) {
