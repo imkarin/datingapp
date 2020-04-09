@@ -49,9 +49,8 @@ header {
 main {
     padding: 25px;
     border-radius: 15px;
-
+    margin-bottom: 30px;
     width:100%;
-    height: calc(100vh - 60px); /* viewport height - nav height */
     max-width: 1150px;
     margin-left: auto;
     margin-right: auto;
@@ -369,7 +368,7 @@ input[name="name"], input[name="useremail"], input[name="password"], input[type=
     background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
     border: none;
     border-radius: 20px;
-    padding: 10px;
+    padding: 10px 30px;
     color: white;
     box-shadow: 1px 1px 5px 0px rgba(168,168,168,1);
 }
@@ -402,3 +401,20 @@ input[type="radio"]:checked+label {
     border: 1.5px solid #5c6ac4;
 }
 
+.personalField {
+    margin-bottom: 50px;
+}
+
+.sliderContainer {
+    width: 130px;
+}
+
+.sliderContainer>p {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+.fileInvalid {
+    display: none;
+}
