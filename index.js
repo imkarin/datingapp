@@ -208,7 +208,7 @@ function profilepage(req, res) {
     res.redirect("/login");
     return
   } else {
-    allUsersCollection.findOne({id: req.session.user.id}, (err, data) => {
+    allUsersCollection.findOne({_id: mongo.ObjectId(req.session.user._id)}, (err, data) => {
       if (err){
         console.log("Error, cannot find the user");
       };
@@ -228,14 +228,14 @@ function addMovie(req, res) {
     res.redirect("/login");
   } else {
     // assign the session user name to a variable
-    let userSessionID = req.session.user.id;
+    let userSessionID = req.session.user._id;
   
     // search in api for the inserted movie
     request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
       body = JSON.parse(body); // parse the outcome to object, so requesting data is possible
       let posterLink = baseImgURL + body.results[0].poster_path; // the path to the movie poster image
 
-      allUsersCollection.updateOne({id: userSessionID}, { $addToSet: {movies: {
+      allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, { $addToSet: {movies: {
         title: body.results[0].original_title,
         posterImage: posterLink,
         description: body.results[0].overview
@@ -260,10 +260,10 @@ function removeMovie(req, res) {
     res.redirect("/login")
   } else {
     // assign the session user name to a variable
-    let userSessionID = req.session.user.id;
+    let userSessionID = req.session.user._id;
 
     // remove the movie in database
-    allUsersCollection.updateOne({id: userSessionID}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
+    allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
       if (err) {
         console.log("could not remove movie");
         console.log(err);
