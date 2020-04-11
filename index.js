@@ -151,7 +151,7 @@ function login(req, res, next) {
   })
 }
 
-function allUsers(req, res, next) {
+async function allUsers(req, res, next) {
   if (!req.session.user) {
     res.redirect("/login");
     return;
@@ -161,6 +161,16 @@ function allUsers(req, res, next) {
   let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
   let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
 
+  let movieTitles = []; // declare a empty array, where the moviesTitles will be pushed in
+
+  let myMovies = await allUsersCollection.find({_id: mongo.ObjectId(req.session.user._id)}).forEach( function(userData, err){
+    let moviesArray = userData.movies; // get the movies array with the (nested) objects in it
+    for (var i = 0; i < moviesArray.length; i++) { // loop through this to get all the objects in the array
+      moviesArray[i];
+      movieTitles.push(moviesArray[i].title); // push all the titles in the objects to the emtpy movieTitles array
+    }
+  });
+
   // display the people who match our user's filters
   allUsersCollection.find({
     $and: [
@@ -168,7 +178,8 @@ function allUsers(req, res, next) {
       {_id: {$nin: likedObjects}},
       {_id: {$nin: dislikedObjects}},
       {gender: {$in: req.session.user.preference["gender"]}},
-      {age: {$gte: req.session.user.preference["minAge"]}}
+      {age: {$gte: req.session.user.preference["minAge"]}},
+      {"movies.title": {$in: movieTitles}}
     ]
   }).toArray(done)
 
@@ -176,7 +187,8 @@ function allUsers(req, res, next) {
     if (err) {
       next (err);
     } else {
-      res.render("index.ejs", {data: filteredPeople})
+      res.render("index.ejs", {data: filteredPeople});
+      console.log(filteredPeople);
     }
   }
 }
