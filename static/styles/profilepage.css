@@ -1,0 +1,400 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(247, 247, 247);
+    font-size: 16px;
+    font-family: 'Roboto Light', sans-serif;
+    color: #000;
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    line-height: 1.7em;
+}
+
+h1 {
+    font-family: 'Montserrat', 'Roboto', sans-serif;
+    font-size: 1.7em;
+    line-height: 3em;
+}
+
+h2 {
+    font-size: 1.3em;
+    line-height: 1.7em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: rgb(177, 177, 177);
+}
+
+a:hover {
+    color: #1CA7EC;
+}
+
+/* browse page header */
+header {
+    display: none;
+}
+
+main {
+    padding: 25px;
+    border-radius: 15px;
+
+    width:100%;
+    max-width: 1150px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+}
+
+/* browse page, filter button */
+main > section:first-child {
+    position: absolute;
+    z-index: 1;
+    left: 15px;
+    top: 15px;
+}
+
+main > section:first-child img {
+    width: 25px;
+    opacity: .5;
+}
+
+/* browse page, people cards (click for detail, like or dislike */
+main > ul {
+    margin-top: 30px;
+    height: calc(100% - 30px);
+    position: relative;
+    list-style: none;
+}
+
+main > ul > li {
+    position: absolute;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    padding: 25px;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+}
+main > ul > li:last-of-type {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+}
+
+main > ul figure {
+    height: 100%;
+    color: #000;
+}
+
+main > ul figure img {
+    margin-top: -25px;
+    margin-left: -25px;
+    position: relative;
+    height: 76%;
+    width: calc(100% + 50px);
+    display:block;
+    background: #fffaaa;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    object-fit: cover;
+    object-position: center;
+}
+
+main > ul figure > figcaption {
+    position: relative;
+    margin-top: 25px;
+}
+
+main > ul figure > figcaption > h2 {
+    margin-bottom: 5px;
+}
+
+main > ul figure > figcaption button {
+    padding: 5px 10px;
+    top: -55px;
+    right: 0;
+    width: 55px;
+    height: 55px;
+    background: #ffb4b7;
+    border: none;
+    outline: none;
+    border-radius: 100%;
+    position: absolute;
+    font-size: 1.4em;
+    color: #fff;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, .1);
+    transition-delay: .2s;
+    transition-duration: .4s;
+}
+
+main > ul figure > figcaption button:active {
+    background: #ff6c71;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+main > ul figure > figcaption > button:nth-of-type(1) {
+    background: #cacaca;
+    margin-right: 65px;
+}
+
+
+main > ul figure > figcaption > button:nth-of-type(1):active {
+    background: #bb2222;
+    transition-delay: 0s;
+    transition-duration: .2s;
+}
+
+/* when there are no more people to display, screen becomes empty */
+main > li.invisible {
+    display: none;
+}
+
+main > p:last-child {
+    position: absolute;
+    left: 0;
+    top: 45vh;
+    width: 100vw;
+    text-align: center;
+    z-index: -999;
+    opacity: .8;
+}
+
+/* main on desktop */
+@media only screen and (min-width: 800px) {
+    body {
+        height: 100vh;
+        
+    }
+    main {
+        
+        margin: 50vh auto;
+        transform: translateY(-50%);
+        padding: 25px;
+        border-radius: 15px;
+        height: 500px;
+    }
+
+    /* browse page, people cards (click for detail, like or dislike */
+    main > ul figure {
+        display: flex;
+    }
+
+    main > ul figure a {
+        width: 40%;
+    }
+
+    main > ul figure img {
+        height: calc(100% + 50px);
+        width: 100%;
+        border-radius: 0;
+    }
+
+    main > ul figure > figcaption {
+        margin: 25px;
+        max-width: 60%;
+        height: 100%;
+    }
+
+    main > ul figure > figcaption button {
+        position: absolute;
+        bottom: 45px;
+        right: 0;
+        top: auto;
+    }
+
+    main > ul figure > figcaption > button:nth-of-type(1) {
+        margin-right: 70px;
+    }
+}
+
+/* login screen */
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+input[type=email], input[type=password] {
+    margin: 5px 0;
+    width: 100%;
+    height: 30px;
+}
+
+input[type=submit] {
+    margin-top: 10px;
+    width: 100%;
+    font-family: 'Roboto Light', sans-serif;
+    font-size: .9em;
+    color: #FFFFFF;
+    padding: 10px 25px;
+    border-radius: 25px;
+    background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
+    border: none;
+}
+
+/* bottom nav */
+nav > img:first-of-type {
+    display: none;
+}
+
+nav {
+    width: 100%;
+    height: 60px;
+    display: block;
+    background-color: #ffffff;
+    position: fixed;
+    bottom: 0;
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.0);
+}
+
+nav ul {
+    margin: 0 auto;
+    width: 95vw;
+    height: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    font-size: .7em;
+    line-height: 2.2em;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+nav ul img {
+    margin: 7px auto 0 auto;
+    width: 20px;
+    opacity: .33;
+    display: block;
+}
+
+nav ul > li:nth-of-type(2) > a {
+    color: rgb(0, 0, 0, .9);
+    font-family: 'Roboto Bold', sans-serif;
+}
+
+nav ul > li:nth-of-type(2) > a > img {
+    opacity: .9;
+}
+
+@media only screen and (min-width: 800px) {
+    /* bottom nav */
+    nav > img:first-of-type {
+        width: 150px;
+        align-self: center;
+        display: block;
+        margin: 0;
+        opacity: 1;
+    }
+
+    nav {
+        position: absolute;
+        top: 0;
+        padding: 25px 25px 0 25px;
+        width: 100vw;
+        background-color: transparent;
+        box-shadow: none;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    nav ul {
+        margin: 0;
+        width: 300px;
+        font-size: .85em;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    nav ul img {
+        display: none;
+    }
+}
+
+nav ul > li:first-of-type > a > img {
+    opacity: 1;
+}
+
+.profileImg {
+    width: 210px;
+    height: 210px;
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.movieImg {
+    width: 100%;
+    filter: brightness(50%);
+}
+
+.movieContainer {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+.infoContainer {
+    position: absolute;
+    top: 85%;
+    color: white;
+    margin-left: 5px;
+}
+
+.movieTitle {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.movieDesc {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 300px;
+    margin-top: 10px;
+}
+
+.deleteForm {
+    position: absolute;
+    top: 2%;
+    right: 5%;
+}
+
+.deleteButton {
+    border: none;
+    background: none;
+    color: white;
+}
+
+.addButton {
+    background-image: linear-gradient(to bottom right, rgb(216, 174, 255), #FF9699);
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    color: white;
+    box-shadow: 1px 1px 5px 0px rgba(168,168,168,1);
+}
+
+.movieInput {
+    border: 1px solid lightgrey;
+    padding: 10px;
+    color: black;
+}
+
+.movieInput:focus {
+    border: 1px solid #9c9c9c;
+    outline: none;
+}
+
+.movieInput::placeholder {
+    color: lightgrey;
+}

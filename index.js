@@ -1,9 +1,46 @@
-// "Server started" message --------------------------------------------------------------------
+// "Server started" message ---------------------------------------------------------------------
 console.log("Server started, wait for database to connect...");
+
+// Require .env ---------------------------------------------------------------------------------
+require("dotenv").config();
 
 // Express --------------------------------------------------------------------------------------
 const express = require("express");
 const app = express();
+
+// Multer --------------------------------------------------------------------------------------
+const multer = require("multer");
+let storage = multer.diskStorage({
+  destination: function (req, files, cb) {
+    cb(null, "static/images/")
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+});
+let fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+    ) {
+    cb(null, true);
+  } else {
+    cb(new Error("File format should be PNG,JPG,JPEG"), false);
+  }
+};
+let upload = multer({ storage: storage, fileFilter: fileFilter });
+
+// Movie database API ----------------------------------------------------------------------------
+const request = require('request');
+  // This is the baseURl for accessing the API database
+let baseURL = 'https://api.themoviedb.org/3/';
+  // This is the baseURl for the images for accessing the images in the API database
+let baseImgURL = 'https://image.tmdb.org/t/p/w500';
+  // The id of a movie in the API database
+let movieIdApi = 'null';
+  // The APIKEY
+let APIKEY = process.env.APIKEY;
 
 // Define static files folder -------------------------------------------------------------------
 app.use("/static", express.static("static"));
@@ -15,8 +52,10 @@ app.set("view engine", "ejs");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// Use Argon2 (password hashing) -----------------------------------------------------------------
+const argon2 = require('argon2');
+
 // MongoDB ---------------------------------------------------------------------------------------
-require("dotenv").config();
 const mongo = require("mongodb");
 
 let db = null;
@@ -30,8 +69,11 @@ mongo.MongoClient.connect(url, function (err, client) {
   console.log("Connected to database.");
   
   // the allUsersCollection contains general data about all user accounts
-  allUsersCollection = db.collection("users");
+  allUsersCollection = db.collection(process.env.DB_COLLECTION);
 })
+
+// Mongoose -------------------------------------------------------------------------------------
+const mongoose = require('mongoose');
 
 // Session --------------------------------------------------------------------------------------
 const session = require("express-session");
@@ -49,7 +91,13 @@ app.get("/browsepage", allUsers);
 app.get("/addfilters", filterPage);
 app.get("/likedpage", likedUsers);
 app.get("/profile/:id", profile);
+app.get("/profilepage", profilepage);
+app.get("/register", (req, res) => res.render("register.ejs")); 
+app.get("/succes", (req, res) => res.render("succes.ejs"));
 app.post("/login", login);
+app.post("/profilepage.ejs", addMovie);
+app.post("/succes.ejs", removeMovie);
+app.post("/register.ejs", upload.single("userImage"), registerUser);
 app.post("/addfilters", addFilters);
 app.post("/:id", like);
 app.delete("/:id", remove);
@@ -60,25 +108,25 @@ function loginPage(req, res, next) {
 }
 
 function login(req, res, next) {
-  allUsersCollection.findOne({email: req.body.useremail}, (err, data) => {
+  allUsersCollection.findOne({email: req.body.useremail}, async (err, data) => {
     if (err) {
       next (err);
     } else {
       // if e-mail doesn't exist
       if (data == null) {
         res.redirect("/login");
-        console.log("No user for this e-mail")
+        console.log("No user for this e-mail");
         return;
       }
       // if e-mail and password match
-      if (req.body.password == data.password) {
+      if (await argon2.verify(data.password, req.body.password)) {
         req.session.user = data;
         console.log("Logged in as " + req.session.user.name);
         res.redirect("/");
       } else {
-      // if password is incorrect
-      console.log("Incorrect password");
-      res.redirect("/login");
+        // if they don't match
+        console.log("Incorrect password");
+        res.redirect("/login");
       }
     }
   })
@@ -90,12 +138,16 @@ function allUsers(req, res, next) {
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // display the people who match our user's filters
   allUsersCollection.find({
     $and: [
       {_id: {$ne: mongo.ObjectId(req.session.user._id)}},
-      {id: {$nin: req.session.user.hasLiked}},
-      {id: {$nin: req.session.user.hasDisliked}},
+      {_id: {$nin: likedObjects}},
+      {_id: {$nin: dislikedObjects}},
       {gender: {$in: req.session.user.preference["gender"]}},
       {age: {$gte: req.session.user.preference["minAge"]}}
     ]
@@ -139,7 +191,7 @@ function profile(req, res, next) {
   // load profile data
   let id = req.params.id;
   allUsersCollection.findOne({
-    id: id
+    _id: mongo.ObjectId(id)
   }, done)
   
   function done(err, data) {
@@ -151,26 +203,140 @@ function profile(req, res, next) {
   }
 }
 
+function profilepage(req, res) {
+  if (!req.session.user) {
+    res.redirect("/login");
+    return
+  } else {
+    allUsersCollection.findOne({_id: mongo.ObjectId(req.session.user._id)}, (err, data) => {
+      if (err){
+        console.log("Error, cannot find the user");
+      };
+
+      res.render("profilepage.ejs", {
+        data: data
+      });
+    });
+  };
+};
+
+function addMovie(req, res) {
+  // the movie the user adds to his profile
+  let insertedMovie = req.body.movieTitle;
+
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    // assign the session user name to a variable
+    let userSessionID = req.session.user._id;
+  
+    // search in api for the inserted movie
+    request(baseURL + "search/movie/?api_key=" + APIKEY + "&query=" + insertedMovie, function (error, response, body, req, res) {
+      body = JSON.parse(body); // parse the outcome to object, so requesting data is possible
+      let posterLink = baseImgURL + body.results[0].poster_path; // the path to the movie poster image
+
+      allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, { $addToSet: {movies: {
+        title: body.results[0].original_title,
+        posterImage: posterLink,
+        description: body.results[0].overview
+      }}}, (err, req, res) => {
+        if (err) {
+          console.log("could not add movie to movies");
+        } else {
+          console.log("update confirmed, movie is added");
+        };
+      });
+    });
+    res.redirect('/profilepage');
+  };
+};
+
+function removeMovie(req, res) {
+  let selectedMovie = req.body.movieTitle;
+  console.log("function removeMovie...")
+  console.log(selectedMovie);
+
+  if (!req.session.user) {
+    res.redirect("/login")
+  } else {
+    // assign the session user name to a variable
+    let userSessionID = req.session.user._id;
+
+    // remove the movie in database
+    allUsersCollection.updateOne({_id: mongo.ObjectId(userSessionID)}, {$pull: {movies: {title: selectedMovie}}}, (err, req, res) => {
+      if (err) {
+        console.log("could not remove movie");
+        console.log(err);
+      } else {
+        console.log("removed movie");
+      };
+    });
+    res.redirect("/profilepage");
+  };
+};
+
+async function registerUser(req, res, file) {
+  let hash = await argon2.hash(req.body.password); // hash the inserted password
+
+  let birthdate = req.body.birthday; // get inserted date
+  let birthday = +new Date(birthdate);
+  let age = Math.floor((Date.now() - birthday) / 31557600000); // calculate age
+
+  allUsersCollection.insertOne({
+    email: req.body.useremail,
+    password: hash,
+    name: req.body.name,
+    age: age,
+    gender: req.body.gender,
+    photo: req.file.originalname,
+    desc: req.body.desc,
+    preference: {
+      gender: [req.body.prefGenderMale, req.body.prefGenderFemale],
+      minAge: parseInt(req.body.prefAge)
+    },
+    location: req.body.location,
+    movies: [],
+    hasLiked: [],
+    hasDisliked: [],
+    messages: {}
+  }, (err, req, res) => {
+    if (err) {
+      console.log("Could not post/add form");
+    } else {
+      console.log("Added user!");
+    }
+  })
+  res.redirect("/login");
+};
+
 function likedUsers(req, res, next) {
   if (!req.session.user) {
     res.redirect("/login");
     return;
   }
 
+  // convert our user's hasLiked + hasDisliked array (with strings) into array with mongo objectIDs, for the mongo query
+  let likedObjects = req.session.user.hasLiked.map(s => mongoose.Types.ObjectId(s));
+  let dislikedObjects = req.session.user.hasDisliked.map(s => mongoose.Types.ObjectId(s));
+
   // divide our user's likes in matches and pending
   let matches = [];
   let pending = [];
 
-  allUsersCollection.find({id: {$in: req.session.user.hasLiked}}).toArray(done)
+  allUsersCollection.find({
+    $and: [
+      {_id: {$in: likedObjects}},
+      {_id: {$nin: dislikedObjects}}
+    ]}).toArray(done);
 
   function done(err, data) {
     if (err) {
       next (err);
     } else {
       for (let i = 0; i < data.length; i++) {
-        if (data[i].hasLiked.includes(req.session.user.id) && !req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        if (data[i].hasLiked.includes(req.session.user._id) && !req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           matches.push(data[i]);
-        } else if (!req.session.user.hasDisliked.includes(data[i].id) && !data[i].hasDisliked.includes(req.session.user.id)) {
+        } else if (!req.session.user.hasDisliked.includes(data[i]._id) && !data[i].hasDisliked.includes(req.session.user._id)) {
           pending.push(data[i]);
         }
       }
@@ -206,4 +372,4 @@ function onNotFound(req, res, next) {
 }
 
 // Listen on a port
-app.listen(3000);
+app.listen(process.env.PORT || 3000);

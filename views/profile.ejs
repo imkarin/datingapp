@@ -7,16 +7,16 @@
 
     <link href="https://fonts.googleapis.com/css?family=Sansita:400,400i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
-    <title><%= data.firstName %>'s profile</title>
+    <title><%= data.name %>'s profile</title>
 </head>
 <body>
     <header>
         <a href="/">X</a>
         <img src="../static/images/<%= data.photo %>" alt="Profilepicture">
-            <form action="/<%= data.id %>" method="post">
+            <form action="/<%= data._id %>" method="post">
                 <button class="likebutton" name="likebutton">❤</button>
             </form>
-            <button data-id="<%= data.id %>" class="dislikebutton" name="dislikebutton">x</button>
+            <button data-id="<%= data._id %>" class="dislikebutton" name="dislikebutton">x</button>
         </form>
     </header>
     

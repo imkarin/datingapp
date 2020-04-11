@@ -20,7 +20,7 @@
                     <% for (let i = 0; i < data.matches.length; i++) { %>
                         <li>
                             <figure>
-                                <img data-id="<%= data.matches[i].id %>" src="../static/images/<%= data.matches[i].photo %>" alt="Profilepicture">
+                                <img data-id="<%= data.matches[i]._id %>" src="../static/images/<%= data.matches[i].photo %>" alt="Profilepicture">
                                 <figcaption>
                                     <h4><%= data.matches[i].name %></h4>
                                     <p><%= data.matches[i].msg %> Last sent message here.</p>
@@ -40,7 +40,7 @@
                         <% for (let i = 0; i < data.pending.length; i++) { %>
                             <li>
                                 <figure>
-                                    <img data-id="<%= data.pending[i].id %>" src="../static/images/<%= data.pending[i].photo %>" alt="Profilepicture">
+                                    <img data-id="<%= data.pending[i]._id %>" src="../static/images/<%= data.pending[i].photo %>" alt="Profilepicture">
                                     <figcaption>
                                         <h4><%= data.pending[i].name %></h4>
                                     </figcaption>

@@ -39,9 +39,8 @@ function removeChat(event) {
         if (res.status !== 200) {
             throw new Error('Could not delete!');
         }
-
+        
         window.location = '/';
-
     }
 // als js niet werkt, via html 'post' request form met een 'delete' value -> alsnog verwijderen
 }
