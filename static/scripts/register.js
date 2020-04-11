@@ -10,7 +10,22 @@ function validate(){
 	}
 };
 
-dateInput.addEventListener("change", validate);
+let today = new Date();
+let dd = String(today.getDate()).padStart(2, "0");
+let mm = String(today.getMonth() + 1).padStart(2, "0");
+let yyyy = today.getFullYear();
+let minDate = (yyyy - 18) + "-" + mm + "-"  + dd;
+
+function changeMaxDate() {
+	dateInput.max = minDate;
+} 
+
+dateInput.addEventListener("change", () => {
+	changeMaxDate()
+	validate();
+});
+
+
 
 let validFileExtensions = ["jpg", "jpeg", "png"];
 let fileInput = document.querySelector("input[name='userImage']");
