@@ -22,9 +22,14 @@
     "mongodb": "^3.5.4",
     "mongoose": "^5.9.7",
     "multer": "^1.4.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "aws-sdk": "^2.646.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
+  },
+  "engines" : {
+    "node" : "13.7.0",
+    "npm" : "6.13.7" 
   }
 }

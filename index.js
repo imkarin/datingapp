@@ -56,6 +56,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const argon2 = require('argon2');
 
 // MongoDB ---------------------------------------------------------------------------------------
+require("aws-sdk");
+
 const mongo = require("mongodb");
 
 let db = null;
