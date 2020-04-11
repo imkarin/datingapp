@@ -372,4 +372,4 @@ function onNotFound(req, res, next) {
 }
 
 // Listen on a port
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
