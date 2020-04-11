@@ -188,7 +188,6 @@ async function allUsers(req, res, next) {
       next (err);
     } else {
       res.render("index.ejs", {data: filteredPeople});
-      console.log(filteredPeople);
     }
   }
 }
