@@ -31,6 +31,10 @@ let fileFilter = (req, file, cb) => {
 };
 let upload = multer({ storage: storage, fileFilter: fileFilter });
 
+// Compression ----------------------------------------------------------------------------
+const compression = require("compression");
+app.use(compression());
+
 // Movie database API ----------------------------------------------------------------------------
 const request = require('request');
   // This is the baseURl for accessing the API database
@@ -96,6 +100,19 @@ app.get("/profile/:id", profile);
 app.get("/profilepage", profilepage);
 app.get("/register", (req, res) => res.render("register.ejs")); 
 app.get("/succes", (req, res) => res.render("succes.ejs"));
+app.get("/events", function (req, res) {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+
+  let timer = setInterval(function () {
+    res.write("data: ping\n\n");
+
+    res.flush();
+  }, 2000)
+  res.on("close", function () {
+    clearInterval(timer);
+  });
+});
 app.post("/login", login);
 app.post("/profilepage.ejs", addMovie);
 app.post("/succes.ejs", removeMovie);
