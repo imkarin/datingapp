@@ -116,6 +116,7 @@ app.get("/events", function (req, res) {
 app.post("/login", login);
 app.post("/profilepage.ejs", addMovie);
 app.post("/succes.ejs", removeMovie);
+app.post("/changeImg.ejs", upload.single("userImage"), changeImage);
 app.post("/register.ejs", upload.single("userImage"), registerUser);
 app.post("/addfilters", addFilters);
 app.post("/:id", like);
@@ -303,6 +304,18 @@ function removeMovie(req, res) {
     });
     res.redirect("/profilepage");
   };
+};
+
+function changeImage(req, res, file) {
+  allUsersCollection.updateOne({_id: mongo.ObjectId(req.session.user._id)}, { $set: {photo: req.file.originalname}}, (err, req, res) => { // set the photo-field in the database to the new uploaded image
+    if (err) {
+      console.log("could not update picture");
+    } else {
+      console.log("updated picture");
+    }
+  });
+
+  res.redirect("/profilepage");
 };
 
 async function registerUser(req, res, file) {
