@@ -27,6 +27,7 @@
     "aws-sdk": "^2.646.0"
   },
   "devDependencies": {
+    "eslint": "^6.8.0",
     "nodemon": "^2.0.2"
   },
   "engines": {
