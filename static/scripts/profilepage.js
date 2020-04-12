@@ -1,4 +1,3 @@
-let validFileExtensions = ["jpg", "jpeg", "png"];
 let fileInput = document.querySelector("input[name='userImage']");
 let allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
 let fileInvalid = document.querySelector(".fileInvalid");
@@ -14,6 +13,6 @@ function validateImage() {
 		fileInvalid.style.display = "none";
 		changeImgForm.submit();
 	}
-};
+}
 
-fileInput.addEventListener("change", validateImage)
+fileInput.addEventListener("change", validateImage);
