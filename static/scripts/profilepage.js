@@ -1,23 +1,19 @@
-// html elements
-const deleteButton = document.querySelectorAll(".deleteButton");
+let validFileExtensions = ["jpg", "jpeg", "png"];
+let fileInput = document.querySelector("input[name='userImage']");
+let allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+let fileInvalid = document.querySelector(".fileInvalid");
+let changeImgForm = document.querySelector(".changeImageForm");
 
-function removeMovie() {
-	let node = event.target;
-	let id = node.dataset.id
+function validateImage() {
 
-	let res = new XMLHttpRequest();
-	res.open("PUT", "/" + id);
-	res.onload = onload;
-	res.send();
-
-	function onload() {
-		if (res.status !== 200) {
-			throw new Error("Could not delete!");
-		}
+	if (!allowedExtensions.exec(fileInput.value)) {
+		fileInput.value = "";
+		fileInvalid.style.display = "block";
+		fileInvalid.style.color = "red";
+	} else {
+		fileInvalid.style.display = "none";
+		changeImgForm.submit();
 	}
+};
 
-	window.location = '/';
-}
-
-// eventlisteners
-deleteButton.addEventListener('click', removeMovie);
+fileInput.addEventListener("change", validateImage)
