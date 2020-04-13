@@ -164,7 +164,7 @@ main > p:last-child {
     position: absolute;
     left: 0;
     top: 45vh;
-    width: 100vw;
+    width: 100%;
     text-align: center;
     z-index: -999;
     opacity: .8;
@@ -215,6 +215,10 @@ main > p:last-child {
 
     main > ul figure > figcaption > button:nth-of-type(1) {
         margin-right: 70px;
+    }
+
+    main > p:last-child {
+        top: 300px;
     }
 }
 

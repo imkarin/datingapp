@@ -157,3 +157,47 @@ nav ul > li:last-of-type > a {
 nav ul > li:last-of-type > a > img {
     opacity: 1;
 }
+
+@media only screen and (min-width: 800px) {
+    /* bottom nav */
+    nav > img:first-of-type {
+        width: 150px;
+        align-self: center;
+        display: block;
+        margin: 0;
+        opacity: 1;
+    }
+
+    nav {
+        position: absolute;
+        top: 0;
+        padding: 25px 25px 0 25px;
+        width: 100vw;
+        background-color: transparent;
+        box-shadow: none;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    nav ul {
+        margin: 0;
+        width: 300px;
+        font-size: .85em;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    nav ul img {
+        display: none;
+    }
+
+    main, header, footer {
+        margin: 0 auto;
+        max-width: 1150px;
+        padding: 0;
+    }
+
+    header {
+        margin-top: 100px;
+    }
+}
