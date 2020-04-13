@@ -398,3 +398,32 @@ nav ul > li:first-of-type > a > img {
 .movieInput::placeholder {
     color: lightgrey;
 }
+
+.changeImageForm {
+    position: relative;
+    margin-left: 50%;
+    bottom: 50px;
+}
+
+input[name="userImage"] {
+    display: none;
+}
+
+.changeImageBtn {
+    background: white;
+    border-radius: 100%;
+    border: 2px solid white;
+    position: absolute;
+    height: 34px;
+}
+
+.changeImageBtn>svg {
+    width: 30px;
+    height: 30px;
+}
+
+.fileInvalid {
+    display: none;
+    position: relative;
+    top: 50px;
+}

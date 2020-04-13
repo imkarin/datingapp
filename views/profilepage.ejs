@@ -10,6 +10,30 @@
 	<main>
 		<h1>Your profile</h1>
 		<img class="profileImg" src="../static/images/<%= data.photo %>" alt="">
+		<form class="changeImageForm" action="/changeImg.ejs" method="POST" enctype="multipart/form-data">
+			<label class="changeImageBtn" for="imgInput"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0)">
+<path d="M31 41H8C5.8 41 4 39.2 4 37V11C4 8.8 5.8 7 8 7H40C42.2 7 44 8.8 44 11V28C44 35.2 38.2 41 31 41Z" fill="#8CBCD6"/>
+<path d="M35 19C36.6569 19 38 17.6569 38 16C38 14.3431 36.6569 13 35 13C33.3431 13 32 14.3431 32 16C32 17.6569 33.3431 19 35 19Z" fill="#B3DDF5"/>
+<path d="M20 16L9 32H31L20 16Z" fill="#9AC9E3"/>
+<path d="M31 22L23 32H39L31 22Z" fill="#B3DDF5"/>
+<path d="M47.7 29.1L44.9 26.3C44.5 25.9 43.8 25.9 43.3 26.3L42 27.6L46.4 32L47.7 30.7C48.1 30.3 48.1 29.6 47.7 29.1V29.1Z" fill="#E57373"/>
+<path d="M27.467 42.167L39.77 29.865L44.154 34.249L31.85 46.55L27.467 42.167Z" fill="#FF9800"/>
+<path d="M46.4 32.038L44.208 34.23L39.825 29.846L42.017 27.655L46.4 32.038Z" fill="#B0BEC5"/>
+<path d="M27.5 42.2L26 48L31.8 46.5L27.5 42.2Z" fill="#FFC107"/>
+<path d="M26.7 45L26 48L29 47.3L26.7 45Z" fill="#37474F"/>
+</g>
+<defs>
+<clipPath id="clip0">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+</defs>
+</svg></label>
+			<input type="file" name="userImage" accept="image/*" id="imgInput" required>
+			<p class="fileInvalid">File must be a .jpg, jpeg, .png or .gif!</p>
+			<!-- <button class="changeImageBtn" type="submit">
+			</button> -->
+		</form>
 		<p>Naam: <%= data.name %></p>
 		<p>Leeftijd: <%= data.age %></p>
 		<p>Description: <%= data.desc %></p>
@@ -41,6 +65,6 @@
 
 	<%- include ('nav') -%>
 	
-	<!-- <script src="../static/scripts/profilepage.js"></script> -->
+	<script src="../static/scripts/profilepage.js"></script>
 </body>
 </html>
