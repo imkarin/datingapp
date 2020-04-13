@@ -34,33 +34,30 @@
 			<!-- <button class="changeImageBtn" type="submit">
 			</button> -->
 		</form>
-		<p>Naam: <%= data.name %></p>
-		<p>Leeftijd: <%= data.age %></p>
-		<p>Description: <%= data.desc %></p>
-		<br>
-		<br>
+		<h2><%= data.name %>, <%= data.age %></h2>
+		<p><%= data.desc %></p>
 		<form action="/profilepage.ejs" method="POST">
-			<label for="movieTitle">Naam film:</label>
+			<label for="movieTitle"><h3>Add a movie:</h3></label>
 			<input name="movieTitle" type="text" class="movieInput" placeholder="Avengers: Endgame">
-			<button type="submit" class="addButton">Voeg film toe</button>
+			<button type="submit" class="addButton">Add movie</button>
 		</form>
-		<br>
-		<br>
-		<h2>Mijn films:</h2>
-		<% data.movies.forEach(function(data) {
-			%>
-			<div class="movieContainer">
-				<img class="movieImg" src="<%= data.posterImage %>" alt="<%= data.title %>">
-				<div class="infoContainer">
-				<p class="movieTitle"><%= data.title %></p>
-				<p class="movieDesc"><%= data.description %></p>
+		<section>
+			<h3>Mijn films:</h3>
+			<% data.movies.forEach(function(data) {
+				%>
+				<div class="movieContainer">
+					<img class="movieImg" src="<%= data.posterImage %>" alt="<%= data.title %>">
+					<div class="infoContainer">
+						<p class="movieTitle"><%= data.title %></p>
+						<p class="movieDesc"><%= data.description %></p>
+					</div>
+					<form action="/succes.ejs" method="POST" class="deleteForm">
+						<input type="hidden" name="movieTitle" value="<%= data.title %>">
+						<button class="deleteButton" type="submit">Verwijder</button>
+					</form>
 				</div>
-				<form action="/succes.ejs" method="POST" class="deleteForm">
-					<input type="hidden" name="movieTitle" value="<%= data.title %>">
-					<button class="deleteButton" type="submit">Verwijder</button>
-				</form>
-			</div>
-			<% }); %>
+				<% }); %>
+			</section>
 	</main>
 
 	<%- include ('nav') -%>
