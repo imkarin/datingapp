@@ -31,29 +31,18 @@
             <p><%= data.desc %></p>
         </section>
 
+
         <section>
-            <h4>Favourite artists</h4>
+            <h4>Favourite movies</h4>
             <ul>
-                <li>
-                    <figure>
-                        <img src="../static/images/omam.png" alt="">
-                        <figcaption>Of Mice &amp; Men</figcaption>
-                    </figure>
-                </li>
-
-                <li>
-                    <figure>
-                        <img src="../static/images/atl.jpg" alt="">
-                        <figcaption>All Time Low</figcaption>
-                    </figure>
-                </li>
-
-                <li>
-                    <figure>
-                        <img src="../static/images/wagewar.png" alt="">
-                        <figcaption>Wage War</figcaption>
-                    </figure>
-                </li>
+               <% data.movies.forEach(function(data) { %>
+                    <li>
+                        <figure>
+                            <img src="<%= data.posterImage %>" alt="<%= data.title %>">
+                            <figcaption><%= data.title %></figcaption>
+                        </figure>
+                    </li>
+               <% }); %> 
             </ul>
         </section>    
     </main>
