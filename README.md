@@ -95,7 +95,7 @@ On the discover page, the user sees people who meet his preferences and have sim
 Based on the user's favourite movies and series, the app shows them people with the same movies/series on the discover page.
 
 ***
-<img src="https://user-images.githubusercontent.com/57796369/79170713-79f5db00-7df0-11ea-8be5-9789c6bef79f.gif" width="20%" /><img src="https://user-images.githubusercontent.com/57796369/79170716-7bbf9e80-7df0-11ea-8243-b705fe08a31d.gif" width="20%" />
+<img src="https://user-images.githubusercontent.com/57796369/79170713-79f5db00-7df0-11ea-8be5-9789c6bef79f.gif" width="20%" />  <img src="https://user-images.githubusercontent.com/57796369/79170716-7bbf9e80-7df0-11ea-8243-b705fe08a31d.gif" width="20%" />
 
 ### Age and gender filter
 The user can set a preferred gender and minimum age for the people on the discover page, to find his ideal date.
