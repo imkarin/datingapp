@@ -19,6 +19,10 @@ This project is made by Karin Meijvogel and Jelmer Overeem, and is partially bas
 <img src="https://i.imgur.com/TtBEJ8z.png" width="33%"><img src="https://i.imgur.com/hqh7Jhv.png" width="33%"><img src="https://i.imgur.com/QPssjUy.png" width="33%">
 
 ## Installation guide 🖱️
+### Requirements
+To run this project, you'll need Node and Git installed. Also, any text editor and MongoDB compass are useful, if you want to look into the code and see the database structure for yourself.
+
+### Install
 If you just want to try the app for yourself, you can visit it on [wavy-dating.herokuapp.com](http://wavy-dating.herokuapp.com/). You can also clone the repository to your desired location. Then navigate to it:
 
 ```
