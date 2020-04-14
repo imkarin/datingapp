@@ -65,11 +65,14 @@ To understand the code better, it's useful to know how the database is structure
 <img src="https://user-images.githubusercontent.com/57796369/79160698-81aa8500-7dda-11ea-926b-c8cdac1387b8.gif">
 
 ## App features ✨
-<img align="left" src="https://user-images.githubusercontent.com/57796369/79169403-a60f5d00-7dec-11ea-8d0b-2f4cf8cd898a.gif" width="20%" /> 
-<img align="left" src="https://user-images.githubusercontent.com/57796369/79170166-dc4ddc00-7dee-11ea-8c5c-98e2255f4fb2.gif" width="20%" />
+<img src="https://user-images.githubusercontent.com/57796369/79169403-a60f5d00-7dec-11ea-8d0b-2f4cf8cd898a.gif" width="20%" />
 
 ### Registration
 Users can create an account on the registration page. They fill in their name, e-mail, age, preferences and profile picture. Passwords get stored in the database as hashes, using **Argon 2**.
+
+***
+
+<img src="https://user-images.githubusercontent.com/57796369/79170166-dc4ddc00-7dee-11ea-8c5c-98e2255f4fb2.gif" width="20%" />
 
 ### Login
 Users can login using their e-mail and password. Verification goes through **Argon 2**.
