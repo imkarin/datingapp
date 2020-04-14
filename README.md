@@ -13,6 +13,7 @@ This project is made by Karin Meijvogel and Jelmer Overeem, and is partially bas
 * [Installation guide](#installation-guide-%EF%B8%8F)
 * [Database structure](#database-structure-)
 * [App features](#app-features-)
+* [NPM packages](#npm-packages-)
 * [License](#license-)
 * [Sources](#sources-)
 
@@ -126,7 +127,7 @@ When the user sees someone who interests him, they can press the like button. Th
 
 <img src="https://user-images.githubusercontent.com/57796369/79170719-7d896200-7df0-11ea-886d-3726f29d5232.gif" width="20%" />
 
-## NPM Packages
+## NPM packages 📦
 The dependencies we've used to build this project are:
 
 * [Argon2](https://www.npmjs.com/package/argon2)
@@ -146,7 +147,7 @@ And dev dependencies:
 * [ESLint](https://www.npmjs.com/package/eslint)
 * [Nodemon](https://www.npmjs.com/package/nodemon)
 
-## License
+## License 📄
 This project is made and shared under the MIT license. For more details, read the [license.md](https://github.com/KarinMeijvogel/datingapp/blob/master/LICENSE).
 
 ## Sources 🔎
