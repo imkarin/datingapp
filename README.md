@@ -122,3 +122,34 @@ When the user sees someone who interests him, they can press the like button. Th
 <img src="https://user-images.githubusercontent.com/57796369/79170719-7d896200-7df0-11ea-886d-3726f29d5232.gif" width="20%" />
 
 ## Sources 🔎
+### Code conventions
+* airbnb. (n.d.). airbnb/javascript. Retrieved March 10, 2020, from https://github.com/airbnb/javascript/blob/master/README.md#arrow-functions
+* JavaScript Style Guide. (n.d.). Retrieved March 10, 2020, from https://www.w3schools.com/js/js_conventions.asp
+
+### GitHub flow
+* de Vries, D. (2018, September 9). Using GitHub as a team. Retrieved from https://medium.com/@dandevri/using-github-as-a-team-61f189eaa8ff
+* How to Write a Git Commit Message. (n.d.). Retrieved March 20, 2020, from https://chris.beams.io/posts/git-commit/
+* Understanding the GitHub flow · GitHub Guides. (n.d.). Retrieved March 10, 2020, from https://guides.github.com/introduction/flow/
+
+### Topic: Password hashing
+* L. (2019, January 13). Why You Shouldn’t be Using BCrypt and Scrypt – Ben Prime. Retrieved from https://blog.benpri.me/blog/2019/01/13/why-you-shouldnt-be-using-bcrypt-and-scrypt/
+* Preziuso, M. (2019, February 16). Password Hashing: PBKDF2, Scrypt, Bcrypt and ARGON2. Retrieved from https://medium.com/@mpreziuso/password-hashing-pbkdf2-scrypt-bcrypt-and-argon2-e25aaf41598e
+* Z. (n.d.). bcrypt vs scrypt vs argon2 · zaiste.net. Retrieved April 5, 2020, from https://zaiste.net/security/vs/bcrypt-scrypt-argon2/
+
+### Topic: External API's
+* RapidAPI. (n.d.). How to use the IMDb API on RapidAPI. Retrieved April 10, 2020, from https://rapidapi.com/blog/how-to-use-imdb-api/
+* Does IMDB provide an API? (2009, December 27). Retrieved April 11, 2020, from https://stackoverflow.com/questions/1966503/does-imdb-provide-an-api
+* IMDb | Help. (n.d.). Retrieved April 10, 2020, from https://help.imdb.com/article/imdb/general-information/what-is-imdb/G836CY29Z4SGNMK5?ref_=__seemr#
+
+### Topic: Compression
+* Wilson, D. (2019, March 18). npm: compression. Retrieved April 11, 2020, from https://www.npmjs.com/package/compression
+* Sexton, P. (2016, May 27). How to enable compression and gzip for page speed. Retrieved April 11, 2020, from https://varvy.com/pagespeed/enable-compression.html
+* Performance Best Practices Using Express in Production. (n.d.). Retrieved April 11, 2020, from https://expressjs.com/en/advanced/best-practice-performance.html#use-gzip-compression
+
+### Topic: Deployment
+* Cloud Application Platform | Heroku. (2020, April 7). Retrieved from https://www.heroku.com/
+* Kubernetes vs Openshift. (n.d.). Retrieved April 7, 2020, from https://www.slant.co/versus/11649/24867/~kubernetes_vs_openshift
+* Red Hat OpenShift Container Platform, Built on Kubernetes. (n.d.). Retrieved April 7, 2020, from https://www.openshift.com/
+* Team, D. (2018, September 15). AWS Advantages & Disadvantages | Advantages of Cloud Computing. Retrieved from https://data-flair.training/blogs/aws-advantages/
+* Vidal, J. (2018, November 19). Google Cloud Storage: Pros/Cons and how to use it with JavaScript. Retrieved from https://medium.com/dailyjs/google-cloud-storage-pros-cons-and-how-to-use-it-with-javascript-ea9ce60a94c0
+* Vidal, Jose. (2018, February 23). Amazon S3 pros, cons and how to use it with JavaScript. Retrieved from https://codeburst.io/amazon-s3-pros-cons-and-how-to-use-it-with-javascript-701fffc89154
