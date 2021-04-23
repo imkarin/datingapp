@@ -68,6 +68,7 @@ To understand the code better, it's useful to know how the database is structure
 * `object` messages
 
 <br />
+
 <img src="https://user-images.githubusercontent.com/57796369/79160698-81aa8500-7dda-11ea-926b-c8cdac1387b8.gif">
 
 ## App features ✨
